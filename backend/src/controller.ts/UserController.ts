@@ -258,3 +258,11 @@ export function UserSignOut(req: Request, res: Response) {
     };
 
 };
+
+export function GetUserDetail (req: Request, res: Response) {
+
+
+
+
+    
+}
