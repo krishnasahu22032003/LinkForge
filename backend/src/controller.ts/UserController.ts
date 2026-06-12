@@ -235,3 +235,26 @@ export async function UserSignIn(req: Request, res: Response) {
     };
 
 };
+
+export function UserSignOut(req: Request, res: Response) {
+
+    try {
+        res.clearCookie(
+            AUTH_COOKIE_NAME,
+            AUTH_COOKIE_OPTIONS
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: "Signed out successfully",
+        });
+    } catch (error) {
+        console.error(error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error",
+        });
+    };
+
+};
