@@ -16,12 +16,23 @@ model User {
 id                  String              @id                 @default(cuid())
 username            String?             @db.VarChar(256)
 email               String              @unique             @db.VarChar(256)    
-password            String              @db.VarChar(256)    
+password            String?             @db.VarChar(256)  
+avatar              String?             @db.VarChar(500)    
 emailVerified       Boolean             @default(false) 
 provider            AuthProvider        @default(EMAIL)
+googleId            String?             @unique
 createdAt           DateTime            @default(now())
 updatedAt           DateTime            @updatedAt
-  verificationToken VerificationToken?
+verificationToken   VerificationToken?
+}
+
+model VerificationToken {
+id         String   @id @default(cuid())
+token      String   @unique
+expiresAt  DateTime
+userId     String   @unique
+user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+createdAt  DateTime @default(now())
 }
 
 enum AuthProvider { 
