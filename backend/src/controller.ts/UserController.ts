@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { SignInSchema, SignUpSchema, VerifyEmailSchema } from "../validatons/auth.schema.js";
+import { SignInSchema, SignUpSchema, UpdateUserSchema, VerifyEmailSchema } from "../validatons/auth.schema.js";
 import bcrypt from "bcrypt";
 import { prisma } from "../lib/prisma.js";
 import crypto from "crypto";
@@ -302,4 +302,143 @@ export async function GetUserDetail(req: Request, res: Response) {
     };
 
 };
+
+export async function updateUserDetails(req: Request, res: Response) {
+
+    const parsedData = UpdateUserSchema.safeParse(req.body);
+
+    if (!parsedData.success) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid input",
+            errors: parsedData.error.flatten(),
+        });
+    };
+
+    const userId = req.userId;
+
+    if (!userId) {
+        return res.status(401).json({
+            success: false,
+            message: "Unauthorized",
+        });
+    };
+
+    const { username, currentPassword, newPassword, } = parsedData.data;
+
+    try {
+        const user =
+            await prisma.user.findUnique({
+                where: {
+                    id: userId,
+                },
+            });
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        // Username uniqueness check
+        if (username && username !== user.username) {
+            const usernameExists = await prisma.user.findFirst({
+                where: {
+                    username,
+                    NOT: {
+                        id: userId,
+                    },
+                },
+            });
+
+            if (usernameExists) {
+                return res.status(409).json({
+                    success: false,
+                    message:
+                        "Username already taken",
+                });
+            }
+        }
+
+        let hashedPassword:
+            | string
+            | undefined;
+
+        // Password update flow
+        if (newPassword) {
+            const passwordMatches = await bcrypt.compare(
+                currentPassword!,
+                user.password ?? ""
+            );
+
+            if (!passwordMatches) {
+                return res.status(400).json({
+                    success: false,
+                    message:
+                        "Current password is incorrect",
+                });
+            }
+
+            hashedPassword =
+                await bcrypt.hash(
+                    newPassword,
+                    SALT_ROUNDS
+                );
+        }
+
+        const updatedUser =
+            await prisma.user.update({
+                where: {
+                    id: userId,
+                },
+
+                data: {
+                    ...(username !== undefined && {
+                        username,
+                    }),
+
+                    ...(hashedPassword && {
+                        password: hashedPassword,
+                    }),
+                },
+
+                select: {
+                    id: true,
+                    username: true,
+                    email: true,
+                    updatedAt: true,
+                },
+            });
+
+        // Password changed -> force logout
+        if (newPassword) {
+            res.clearCookie(
+                AUTH_COOKIE_NAME,
+                AUTH_COOKIE_OPTIONS
+            );
+
+            return res.status(200).json({
+                success: true,
+                message:
+                    "Password updated successfully. Please sign in again.",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message:
+                "Profile updated successfully",
+            data: updatedUser,
+        });
+    } catch (error) {
+        console.error(error);
+
+        return res.status(500).json({
+            success: false,
+            message:
+                "Internal server error",
+        });
+    }
+}
 
