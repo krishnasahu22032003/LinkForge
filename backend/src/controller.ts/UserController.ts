@@ -4,6 +4,8 @@ import bcrypt from "bcrypt";
 import { prisma } from "../lib/prisma.js";
 import crypto from "crypto";
 import { sendVerificationEmail } from "../services/email.service.js";
+import { generateToken } from "../lib/jwt.js";
+import { AUTH_COOKIE_NAME, AUTH_COOKIE_OPTIONS } from "../config/cookie.js";
 
 const SALT_ROUNDS = 12;
 
@@ -87,8 +89,8 @@ export async function verifyEmail(req: Request, res: Response) {
     if (!parsedData.success) {
         return res.status(400).json({
             message: "Invalid input",
-        errors: parsedData.error.flatten(),
-    });
+            errors: parsedData.error.flatten(),
+        });
     };
 
     const { token } = parsedData.data;
@@ -155,64 +157,81 @@ export async function verifyEmail(req: Request, res: Response) {
 
 export async function UserSignIn(req: Request, res: Response) {
 
-const parsedData = SignInSchema.safeParse(req.body);
+    const parsedData = SignInSchema.safeParse(req.body);
 
- if (!parsedData.success) {
-    return res.status(400).json({
-      success: false,
-      message: "Invalid input",
-      errors: parsedData.error.flatten(),
-    });
-  };
-
-  const { email, password } = parsedData.data;
-
-   try {
-    const user = await prisma.user.findUnique({
-      where: {
-        email,
-      },
-    });
-
-    if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid email or password",
-      });
-    }
-
-    // Google account trying password login
-    if (user.provider === "GOOGLE") {
-      return res.status(400).json({
-        success: false,
-        message:
-          "This account uses Google Sign-In",
-      });
-    }
-
-    if (!user.emailVerified) {
-      return res.status(403).json({
-        success: false,
-        message:
-          "Please verify your email before signing in",
-      });
-    }
-
-    const passwordMatch =await bcrypt.compare(password, user.password ?? "");
-
-    if (!passwordMatch) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid email or password",
-      });
+    if (!parsedData.success) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid input",
+            errors: parsedData.error.flatten(),
+        });
     };
 
-    
+    const { email, password } = parsedData.data;
 
-}catch(error){
+    try {
+        const user = await prisma.user.findUnique({
+            where: {
+                email,
+            },
+        });
 
-}
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid email or password",
+            });
+        }
 
+        // Google account trying password login
+        if (user.provider === "GOOGLE") {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "This account uses Google Sign-In",
+            });
+        }
 
+        if (!user.emailVerified) {
+            return res.status(403).json({
+                success: false,
+                message:
+                    "Please verify your email before signing in",
+            });
+        }
 
-}
+        const passwordMatch = await bcrypt.compare(password, user.password ?? "");
+
+        if (!passwordMatch) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid email or password",
+            });
+        };
+
+        const token = generateToken(user.id);
+
+        res.cookie(AUTH_COOKIE_NAME, token, AUTH_COOKIE_OPTIONS);
+
+        return res.status(200).json({
+            success: true,
+            message: "Signed in successfully",
+            user: {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+            },
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error",
+        });
+
+    };
+
+};
