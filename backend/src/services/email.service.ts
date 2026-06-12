@@ -1,4 +1,4 @@
-import transporter from "../lib/mailer.js";
+import transporter from "../lib/resend.js";
 
 export async function sendVerificationEmail(
   email: string,

@@ -3,6 +3,7 @@ import { SignUpSchema } from "../validatons/auth.schema.js";
 import bcrypt from "bcrypt";
 import { prisma } from "../lib/prisma.js";
 import crypto from "crypto" ;
+import { sendVerificationEmail } from "../services/email.service.js";
 
 const SALT_ROUNDS = 12 ;
 
@@ -57,6 +58,8 @@ try{
 
     },
    });
+
+   await sendVerificationEmail(user.email , token)
 
 }catch(error){
 
