@@ -1,23 +1,23 @@
-import transporter from "../lib/resend.js";
+import { resend } from "../lib/resend.js";
 
 export async function sendVerificationEmail(
-  email: string,
-  token: string
+    email: string,
+    token: string
 ) {
-  const verificationUrl =
-    `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
+    const verificationUrl = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
 
-  await transporter.sendMail({
-    to: email,
-    subject: "Verify your email",
-    html: `
+    await resend.emails.send({
+        from: "onboarding@resend.dev",
+        to: email,
+        subject: "Verify your email",
+        html: `
       <h1>Welcome to LinkForge</h1>
 
-      <p>Click below to verify your email:</p>
+      <p>Please verify your email address.</p>
 
       <a href="${verificationUrl}">
         Verify Email
       </a>
     `,
-  });
+    });
 }
