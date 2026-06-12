@@ -8,6 +8,6 @@ const app = express() ;
 app.use(express.json());
 app.use(cookieParser());
 
-app.use("api/v1/user", UserRouter);
+app.use("/api/v1/user", UserRouter);
 
 startServer(app) ;

@@ -27,3 +27,10 @@ export const SignUpSchema = z.object({
       "Password must include uppercase, lowercase, number, and special character"
     ),
 });
+
+export const VerifyEmailSchema = z.object({
+  token: z
+    .string()
+    .trim()
+    .min(1, "Verification token is required"),
+});

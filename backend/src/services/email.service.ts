@@ -1,10 +1,11 @@
+import ENV_SECRETS from "../lib/ENV.js";
 import { resend } from "../lib/resend.js";
 
 export async function sendVerificationEmail(
     email: string,
     token: string
 ) {
-    const verificationUrl = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
+    const verificationUrl = `${ENV_SECRETS.FRONTEND_URL}/verify-email?token=${token}`;
 
     await resend.emails.send({
         from: "onboarding@resend.dev",

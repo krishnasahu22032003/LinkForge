@@ -78,4 +78,11 @@ return res.status(500).json({
     message:"Internal server error"
 });
 };
+};
+
+export async function verifyEmail(req : Request , res:Response){
+
+
+
+    
 }
