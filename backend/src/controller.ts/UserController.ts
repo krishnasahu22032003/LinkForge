@@ -31,7 +31,7 @@ try{
 
     if(checkuser){
         
-        return res.status(400).json({
+        return res.status(409).json({
             success:false ,
             message:"User with this email already exists"
         });
@@ -48,7 +48,7 @@ try{
         }
     });
 
-    const token = crypto.randomUUID ; 
+    const token = crypto.randomUUID() ; 
 
    await prisma.verificationToken.create({
     data:{
@@ -59,10 +59,23 @@ try{
     },
    });
 
-   await sendVerificationEmail(user.email , token)
+   await sendVerificationEmail(user.email , token) ;
+
+   return res.status(201).json({
+    success:true ,
+    message: "Verification email sent. Please verify your email.",
+    data:{
+        name : user.username,
+        email:user.email
+    },
+
+   });
 
 }catch(error){
-
-}
-
+console.error(error)
+return res.status(500).json({
+    success:false,
+    message:"Internal server error"
+});
+};
 }
