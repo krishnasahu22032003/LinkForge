@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { SignUpSchema, VerifyEmailSchema } from "../validatons/auth.schema.js";
+import { SignInSchema, SignUpSchema, VerifyEmailSchema } from "../validatons/auth.schema.js";
 import bcrypt from "bcrypt";
 import { prisma } from "../lib/prisma.js";
 import crypto from "crypto";
@@ -155,8 +155,64 @@ export async function verifyEmail(req: Request, res: Response) {
 
 export async function UserSignIn(req: Request, res: Response) {
 
+const parsedData = SignInSchema.safeParse(req.body);
 
+ if (!parsedData.success) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid input",
+      errors: parsedData.error.flatten(),
+    });
+  };
 
+  const { email, password } = parsedData.data;
+
+   try {
+    const user = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
+      });
+    }
+
+    // Google account trying password login
+    if (user.provider === "GOOGLE") {
+      return res.status(400).json({
+        success: false,
+        message:
+          "This account uses Google Sign-In",
+      });
+    }
+
+    if (!user.emailVerified) {
+      return res.status(403).json({
+        success: false,
+        message:
+          "Please verify your email before signing in",
+      });
+    }
+
+    const passwordMatch =await bcrypt.compare(password, user.password ?? "");
+
+    if (!passwordMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
+      });
+    };
 
     
+
+}catch(error){
+
+}
+
+
+
 }
