@@ -46,3 +46,45 @@ export const SignInSchema = z.object({
     .string()
     .min(1, "Password is required"),
 });
+
+export const UpdateUserSchema = z.object({
+  username: z
+    .string()
+    .trim()
+    .min(3)
+    .max(50)
+    .regex(
+      /^[a-zA-Z0-9_]+$/,
+      "Username can only contain letters, numbers and underscores"
+    )
+    .optional(),
+
+  currentPassword: z
+    .string()
+    .min(8)
+    .optional(),
+
+  newPassword: z
+    .string()
+    .min(8)
+    .max(128)
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])/,
+      "Password must include uppercase, lowercase, number and special character"
+    )
+    .optional(),
+})
+.refine(
+  (data) => {
+    if (data.newPassword && !data.currentPassword) {
+      return false;
+    }
+
+    return true;
+  },
+  {
+    message:
+      "Current password is required to set a new password",
+    path: ["currentPassword"],
+  }
+);

@@ -302,3 +302,4 @@ export async function GetUserDetail(req: Request, res: Response) {
     };
 
 };
+
