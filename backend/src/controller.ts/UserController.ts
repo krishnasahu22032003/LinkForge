@@ -152,3 +152,11 @@ export async function verifyEmail(req: Request, res: Response) {
         });
     };
 };
+
+export async function UserSignIn(req: Request, res: Response) {
+
+
+
+
+    
+}

@@ -34,3 +34,15 @@ export const VerifyEmailSchema = z.object({
     .trim()
     .min(1, "Verification token is required"),
 });
+
+export const SignInSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .email("Invalid email"),
+
+  password: z
+    .string()
+    .min(1, "Password is required"),
+});
