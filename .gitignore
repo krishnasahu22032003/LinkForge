@@ -1,31 +1,23 @@
-# Dependencies
-node_modules/
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/build/
 
-# Environment variables
+# Backend
+backend/node_modules/
+backend/dist/
+backend/build/
+
+# Environment files
+frontend/.env
+backend/.env
 .env
-.env.local
-.env.development
-.env.production
-
-# Build output
-dist/
-build/
 
 # Logs
-logs/
 *.log
-npm-debug.log*
-yarn-debug.log*
-pnpm-debug.log*
 
 # TypeScript
 *.tsbuildinfo
-
-# Coverage
-coverage/
-
-# Cache
-.cache/
 
 # IDE
 .vscode/
@@ -35,16 +27,5 @@ coverage/
 .DS_Store
 Thumbs.db
 
-# Temporary files
-tmp/
-temp/
-
-# Uploads
-uploads/
-
-# Database files (if local)
-*.sqlite
-*.db
-
-# Misc
-.eslintcache
+# Coverage
+coverage/
