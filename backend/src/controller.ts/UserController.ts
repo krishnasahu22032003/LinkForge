@@ -6,6 +6,10 @@ import crypto from "crypto";
 import { sendVerificationEmail } from "../services/email.service.js";
 import { generateToken } from "../lib/jwt.js";
 import { AUTH_COOKIE_NAME, AUTH_COOKIE_OPTIONS } from "../config/cookie.js";
+import { GoogleAuthSchema } from "../validatons/google.schema.js";
+import { googleClient } from "../lib/google.js";
+import ENV_SECRETS from "../lib/ENV.js";
+import { LoginTicket } from "google-auth-library";
 
 const SALT_ROUNDS = 12;
 
@@ -440,5 +444,79 @@ export async function updateUserDetails(req: Request, res: Response) {
                 "Internal server error",
         });
     }
-}
+};
 
+export async function GoogleAuth(req: Request, res: Response) {
+  try {
+    const parsedData = GoogleAuthSchema.safeParse(req.body);
+
+    if (!parsedData.success) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Input",
+        error: parsedData.error.flatten(),
+      });
+    }
+
+    const { credential } = parsedData.data;
+
+ const ticket: LoginTicket = await googleClient.verifyIdToken({
+  idToken: credential,
+  audience: ENV_SECRETS.GOOGLE_KEY as string,
+});
+
+    const payload = ticket.getPayload();
+
+    if (!payload?.email) {
+      return res.status(400).json({
+        success: false,
+        message: "Google email missing",
+      });
+    }
+
+    let user = await prisma.user.findUnique({
+      where: { email: payload.email },
+    });
+
+    if (!user) {
+      user = await prisma.user.create({
+        data: {
+          email: payload.email,
+          username: payload.name ?? null,
+          googleId: payload.sub,
+          avatar: payload.picture ?? null,
+          provider: "GOOGLE",
+          emailVerified: true,
+        },
+      });
+    } else if (!user.googleId) {
+      user = await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          googleId: payload.sub,
+          provider: "GOOGLE",
+        },
+      });
+    }
+
+    const token = generateToken(user.id);
+
+    res.cookie(AUTH_COOKIE_NAME, token, AUTH_COOKIE_OPTIONS);
+
+    return res.status(200).json({
+      success: true,
+      message: "Google sign in successful",
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    console.error("Google auth error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+}
