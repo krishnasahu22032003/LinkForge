@@ -190,3 +190,64 @@ export async function getUserUrls(req: Request, res: Response) {
         });
     };
 };
+
+export async function deleteUrl(req: Request,res: Response) {
+
+  try {
+    const { id } = req.params;
+
+    if (typeof id !== "string") {
+  return res.status(400).json({
+    success: false,
+    message: "Invalid URL id",
+  });
+};
+
+    if (!req.userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+
+    const url = await prisma.url.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!url) {
+      return res.status(404).json({
+        success: false,
+        message: "URL not found",
+      });
+    }
+
+    if (url.userId !== req.userId) {
+      return res.status(403).json({
+        success: false,
+        message: "You do not have permission to delete this URL",
+      });
+    }
+
+    await redis.del(`url:${url.shortCode}`);
+
+    await prisma.url.delete({
+      where: {
+        id,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "URL deleted successfully",
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  };
+};
