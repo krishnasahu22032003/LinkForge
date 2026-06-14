@@ -329,3 +329,45 @@ export async function getUrlAnalytics(req: Request,res: Response) {
     });
   };
 };
+
+export async function getDashboardStats( req: Request,res: Response) {
+  try {
+    if (!req.userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+
+    const totalUrls = await prisma.url.count({
+      where: {
+        userId: req.userId,
+      },
+    });
+
+    const clickStats = await prisma.url.aggregate({
+      where: {
+        userId: req.userId,
+      },
+      _sum: {
+        click: true,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        totalUrls,
+        totalClicks:
+          clickStats._sum.click ?? 0,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  };
+};
