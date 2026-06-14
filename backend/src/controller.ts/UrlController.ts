@@ -3,6 +3,7 @@ import { createShortUrlSchema } from "../validatons/url.schema.js";
 import { prisma } from "../lib/prisma.js";
 import generateShortCode from "../lib/shortcode.js";
 import ENV_SECRETS from "../lib/ENV.js";
+import redis from "../lib/redis.js";
 
 
 export async function CreateUrl(req: Request, res: Response) {
@@ -21,7 +22,18 @@ export async function CreateUrl(req: Request, res: Response) {
 
     try {
 
-        const code = generateShortCode();
+        let code;
+        let existing;
+
+        do {
+            code = generateShortCode();
+
+            existing = await prisma.url.findUnique({
+                where: {
+                    shortCode: code,
+                },
+            });
+        } while (existing);
 
         const createUrl = await prisma.url.create({
             data: {
@@ -30,6 +42,10 @@ export async function CreateUrl(req: Request, res: Response) {
                 userId: req.userId ?? null,
             }
         });
+
+        await redis.set(
+            `url:${createUrl.shortCode}`,
+            createUrl.originalUrl)
 
         const ShortLink = `${ENV_SECRETS.BASE_URL}/${createUrl.shortCode}`;
 
@@ -47,21 +63,78 @@ export async function CreateUrl(req: Request, res: Response) {
             }
         });
 
-    }catch(error){
-        console.error(error) ;
+    } catch (error) {
+        console.error(error);
         return res.status(500).json({
-            success:false,
-            message:"Internal Server Error"
+            success: false,
+            message: "Internal Server Error"
         });
     };
 };
 
-export function redirectUrl(req:Request , res:Response){
+export async function redirectUrl(req: Request, res: Response) {
 
-const { shortCode } = req.params ;
+    const { shortCode } = req.params;
 
+    if (typeof shortCode !== "string") {
+        return res.status(400).json({
+            message: "Invalid short code",
+        });
+    };
 
+    try {
 
+        const cachedUrl = await redis.get(`url:${shortCode}`);
 
+        if (cachedUrl) {
+            await prisma.url.update({
+                where: {
+                    shortCode,
+                },
+                data: {
+                    click: {
+                        increment: 1,
+                    },
+                },
+            });
 
-}
+            return res.redirect(cachedUrl as string);
+        };
+
+        const url = await prisma.url.findUnique({
+            where: {
+                shortCode
+            }
+        });
+
+        if (!url) {
+            return res.status(404).json({
+                success: false,
+                message: "Short URL not found",
+            });
+        };
+
+        await redis.set(`url:${shortCode}`, url.originalUrl);
+
+        await prisma.url.update({
+            where: {
+                id: url.id,
+            },
+            data: {
+                click: {
+                    increment: 1,
+                },
+            },
+        });
+
+        return res.redirect(url.originalUrl);
+
+    } catch (error) {
+        console.error(error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+        });
+    };
+};
