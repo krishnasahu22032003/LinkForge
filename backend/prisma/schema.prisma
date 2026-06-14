@@ -53,6 +53,18 @@ model Url {
   @@index([userId])
 }
 
+model Visit {
+id          String      @id @default(cuid())
+shortUrlId  String
+shortUrl    Url         @relation(fields:[shortUrlId], references:[id])
+ipAddress   String?
+userAgent   String?
+referer     String?
+visitedAt   DateTime    @default(now())
+
+@@index([shortUrlId])
+}
+
 enum AuthProvider { 
 
   EMAIL
