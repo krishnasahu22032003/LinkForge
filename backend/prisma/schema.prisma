@@ -59,7 +59,6 @@ shortUrlId  String
 shortUrl    Url         @relation(fields:[shortUrlId], references:[id])
 ipAddress   String?
 userAgent   String?
-referer     String?
 visitedAt   DateTime    @default(now())
 
 @@index([shortUrlId])

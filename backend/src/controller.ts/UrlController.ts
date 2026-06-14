@@ -251,3 +251,81 @@ export async function deleteUrl(req: Request,res: Response) {
     });
   };
 };
+
+export async function getUrlAnalytics(req: Request,res: Response) {
+  try {
+    const { id } = req.params;
+
+    if (typeof id !== "string") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid URL id",
+      });
+    }
+
+    if (!req.userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+
+    const url = await prisma.url.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!url) {
+      return res.status(404).json({
+        success: false,
+        message: "URL not found",
+      });
+    }
+
+    if (url.userId !== req.userId) {
+      return res.status(403).json({
+        success: false,
+        message: "Forbidden",
+      });
+    }
+
+    const visits = await prisma.visit.findMany({
+      where: {
+        shortUrlId: url.id,
+      },
+      orderBy: {
+        visitedAt: "desc",
+      },
+      select: {
+        id: true,
+        ipAddress: true,
+        us: true,
+        visitedAt: true,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        urlId: url.id,
+        shortCode: url.shortCode,
+        originalUrl: url.originalUrl,
+        totalClicks: url.click,
+        totalVisits: visits.length,
+        lastVisited:
+          visits.length > 0
+            ? visits[0].visitedAt
+            : null,
+        visits,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  };
+};
