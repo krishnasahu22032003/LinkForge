@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const createShortUrlSchema = z.object({
-  originalUrl: z
+  url: z
     .string()
     .trim()
     .url("Please enter a valid URL")
