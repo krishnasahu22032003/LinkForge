@@ -24,6 +24,7 @@ googleId            String?             @unique
 createdAt           DateTime            @default(now())
 updatedAt           DateTime            @updatedAt
 verificationToken   VerificationToken?
+urls                Url[]
 }
 
 model VerificationToken {
@@ -33,6 +34,23 @@ expiresAt  DateTime
 userId     String   @unique
 user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 createdAt  DateTime @default(now())
+}
+
+model Url {
+
+  id           String    @id         @default(cuid())
+  originalUrl  String    @db.Text
+  shortCode    String    @unique
+  click        Int       @default(0)
+  expiresAt    DateTime?
+  userId       String?
+  user         User?     @relation(fields: [userId] , references: [id])  
+  visits       Visit[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([shortCode])
+  @@index([userId])
 }
 
 enum AuthProvider { 

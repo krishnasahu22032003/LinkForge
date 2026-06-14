@@ -25,7 +25,10 @@
 }
 
 * { border-color: var(--color-border); }
-html { color-scheme: dark; }
+html { 
+  color-scheme: dark; 
+scroll-behavior: smooth;
+}
 
 body {
   background: var(--color-bg);

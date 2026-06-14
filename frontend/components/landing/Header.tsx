@@ -6,8 +6,9 @@ import { useWindowScroll } from "react-use";
 import gsap from "gsap";
 import Button from "../ui/Button";
 import { Menu, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-const navItems = ["Features", "Pricing", "Testimonials", "About"];
+const navItems = ["Features", "Testimonials", "About"];
 
 const Navbar = () => {
     const [isNavVisible, setIsNavVisible] = useState(true);
@@ -16,6 +17,7 @@ const Navbar = () => {
 
     const { y: currentScrollY } = useWindowScroll();
     const navContainerRef = useRef<HTMLDivElement>(null);
+    const router = useRouter() ;
 
     useEffect(() => {
         if (!navContainerRef.current) return;
@@ -51,7 +53,7 @@ const Navbar = () => {
             >
                 <header className="absolute top-1/2 w-full -translate-y-1/2">
                     <nav className="flex size-full items-center justify-between px-5 sm:px-10">
-                        <Link href="/" className="flex items-center gap-2 group">
+                        <Link href="#home" className="flex items-center gap-2 group">
                             <div className="logo-mark" />
 
                             <span className="text-[20px] font-bold tracking-[-0.04em]">
@@ -74,6 +76,7 @@ const Navbar = () => {
 
                             <div className="flex items-center gap-3">
                                 <Button
+                                    onClick={()=>router.push("/signin")}
                                     variant="secondary"
                                     size="lg"
                                     className="cursor-pointer"

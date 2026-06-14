@@ -357,10 +357,10 @@ export default function LinkForgeHero() {
   };
 
   return (
-    <div className="lf-root">
+    <div className="lf-root" >
       <ThemeStyles />
 
-      <section className="hero min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 py-28 sm:py-28">
+      <section id="home" className="hero min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 py-28 sm:py-28">
         <ForgeSparks />
 
         <div className="relative z-10 max-w-3xl w-full flex flex-col items-center text-center gap-7">

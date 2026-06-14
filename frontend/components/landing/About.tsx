@@ -302,7 +302,7 @@ export default function About() {
     <div className="lf-root">
       <ThemeStyles />
 
-      <section className="about px-4 sm:px-6 py-14 sm:py-22">
+      <section id="about" className="about px-4 sm:px-6 py-14 sm:py-22">
         <div className="relative z-10 max-w-5xl mx-auto flex flex-col items-center">
 
           <motion.div

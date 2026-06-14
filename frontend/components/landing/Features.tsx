@@ -209,7 +209,7 @@ export default function Features() {
     <div className="lf-root">
       <ThemeStyles />
 
-      <section className="features px-4 sm:px-6 py-14 sm:py-22">
+      <section id="features" className="features px-4 sm:px-6 py-14 sm:py-22">
         <div className="relative z-10 max-w-5xl mx-auto flex flex-col items-center">
 
           <motion.div
