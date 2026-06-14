@@ -3,6 +3,7 @@ import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import { Metadata } from "next";
 import Footer from "@/components/ui/Footer";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,7 +17,10 @@ export default function RootLayout({
 }>) {
   return (
      <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
-      <body>{children} <Footer/></body>
+      <body>
+        {children}
+        <Toaster richColors position="top-center"/>
+                 <Footer/></body>
     </html>
   );
 }
