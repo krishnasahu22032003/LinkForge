@@ -1,3 +1,4 @@
+import About from "@/components/landing/About";
 import Navbar from "@/components/landing/Header";
 import Hero from "@/components/landing/Hero";
 
@@ -6,6 +7,7 @@ export default function LandingPage() {
     <main className="min-h-screen">
       <Navbar />
       <Hero/>
+      <About/>
     </main>
   );
 }
