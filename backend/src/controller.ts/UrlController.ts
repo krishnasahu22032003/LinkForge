@@ -138,3 +138,55 @@ export async function redirectUrl(req: Request, res: Response) {
         });
     };
 };
+
+export async function getUserUrls(req: Request, res: Response) {
+
+    if (!req.userId) {
+        return res.status(401).json({
+            success: false,
+            message: "Unauthorized",
+        });
+    };
+
+    try {
+        const urls = await prisma.url.findMany({
+            where: {
+                userId: req.userId
+            },
+            select: {
+                id: true,
+                originalUrl: true,
+                shortCode: true,
+                click: true,
+                createdAt: true,
+            },
+            orderBy: {
+                createdAt: "desc"
+
+            }
+        });
+
+        const formattedUrls = urls.map((url) => ({
+            id: url.id,
+            originalUrl: url.originalUrl,
+            shortCode: url.shortCode,
+            shortUrl: `${ENV_SECRETS.BASE_URL}/${url.shortCode}`,
+            clicks: url.click, 
+            createdAt: url.createdAt,
+        }));
+
+        return res.status(200).json({
+            success: true,
+            count: formattedUrls.length,
+            data: formattedUrls,
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+        });
+    };
+};
