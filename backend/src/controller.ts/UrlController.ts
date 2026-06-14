@@ -55,3 +55,13 @@ export async function CreateUrl(req: Request, res: Response) {
         });
     };
 };
+
+export function redirectUrl(req:Request , res:Response){
+
+const { shortCode } = req.params ;
+
+
+
+
+
+}
