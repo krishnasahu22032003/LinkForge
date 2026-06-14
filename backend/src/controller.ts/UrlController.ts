@@ -315,7 +315,7 @@ export async function getUrlAnalytics(req: Request,res: Response) {
         totalVisits: visits.length,
         lastVisited:
           visits.length > 0
-            ? visits[0].visitedAt
+            ? visits[0]?.visitedAt ?? null
             : null,
         visits,
       },
