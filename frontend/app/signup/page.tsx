@@ -109,7 +109,7 @@ export default function SignupPage() {
 
       toast.success(response.message || "Account created successfully");
 
-      router.push("/verify-email");
+      router.push(`/check-email?email=${encodeURIComponent(email.trim())}`);
 
     } catch (error: any) {
       toast.error(error.message || "Something went wrong");
