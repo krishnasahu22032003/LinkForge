@@ -2,10 +2,9 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Mail, ArrowUpRight, RotateCw  } from "lucide-react";
+import { Mail, ArrowUpRight } from "lucide-react";
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { toast } from "sonner";
 
 type Particle = {
   id: number;
@@ -26,8 +25,6 @@ function CheckEmailContent() {
   const email = searchParams?.get("email") || "your inbox";
 
   const [particles, setParticles] = useState<Particle[]>([]);
-  const [resendCooldown, setResendCooldown] = useState(0);
-  const [resending, setResending] = useState(false);
 
   useEffect(() => {
     const generated = Array.from({ length: 26 }).map((_, i) => ({
@@ -42,30 +39,8 @@ function CheckEmailContent() {
     setParticles(generated);
   }, []);
 
-  useEffect(() => {
-    if (resendCooldown <= 0) return;
-    const timer = setInterval(() => {
-      setResendCooldown((prev) => (prev <= 1 ? 0 : prev - 1));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [resendCooldown]);
-
   const handleOpenGmail = () => {
     window.open("https://mail.google.com", "_blank");
-  };
-
-  const handleResend = async () => {
-    if (resendCooldown > 0 || resending) return;
-    setResending(true);
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 900));
-      toast.success("Verification email resent");
-      setResendCooldown(45);
-    } catch {
-      toast.error("Couldn't resend the email, try again");
-    } finally {
-      setResending(false);
-    }
   };
 
   return (
@@ -239,26 +214,6 @@ function CheckEmailContent() {
                 <ArrowUpRight size={17} />
               </motion.button>
 
-              <button
-                onClick={handleResend}
-                disabled={resendCooldown > 0 || resending}
-                className="flex cursor-pointer h-12 w-full items-center justify-center gap-2 rounded-xl border border-border bg-surface text-sm font-medium text-text transition-colors duration-200 hover:border-border-hover hover:bg-white/[0.06] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {resending ? (
-                  <motion.span
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 0.9, repeat: Infinity, ease: "linear" }}
-                    className="inline-flex"
-                  >
-                    <RotateCw size={16} />
-                  </motion.span>
-                ) : (
-                  <RotateCw size={16} className="text-text-dim" />
-                )}
-                {resendCooldown > 0
-                  ? `Resend available in ${resendCooldown}s`
-                  : "Resend verification email"}
-              </button>
             </motion.div>
 
             <motion.div
