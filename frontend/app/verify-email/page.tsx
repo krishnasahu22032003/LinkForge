@@ -40,7 +40,7 @@ const STATUS_CONFIG: Record<
   success: {
     title: "Email verified",
     description:
-      "Your account is ready. You can now sign in and start creating boards on DrawNova.",
+      "Your account is ready. You can now sign in and start forging Links.",
     accent: "var(--color-success)",
     glow: "rgba(52, 211, 153, 0.28)",
   },
