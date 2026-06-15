@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion , type Easing } from "framer-motion";
+import { motion, type Easing } from "framer-motion";
 import {
   ArrowRight,
   Check,
@@ -15,187 +15,40 @@ import {
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-
-const ThemeStyles = () => (
-  <style>{`
-    :root {
-      --color-bg: #08080C;
-      --color-surface: rgba(255, 255, 255, 0.03);
-      --color-surface-solid: #111116;
-      --color-border: rgba(255, 255, 255, 0.07);
-      --color-border-hover: rgba(255, 255, 255, 0.14);
-
-      --color-text: #F5F5F7;
-      --color-text-muted: #9CA0AE;
-      --color-text-dim: #6B7280;
-
-      --color-accent: #6366F1;
-      --color-accent-light: #818CF8;
-      --color-accent-pale: #A5B4FC;
-
-      --radius: 10px;
-      --radius-lg: 14px;
-    }
-
-    .lf-root * { border-color: var(--color-border); box-sizing: border-box; }
-    .lf-root { color-scheme: dark; }
-
-    .lf-root {
-      background: var(--color-bg);
-      color: var(--color-text);
-      font-family: var(--font-sans);
-      -webkit-font-smoothing: antialiased;
-    }
-
-    .auth { position: relative; overflow: hidden; }
-    .auth::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.04) 1px, transparent 0);
-      background-size: 32px 32px;
-      opacity: 0.35;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .gradient-text {
-      background: linear-gradient(120deg, var(--color-accent-pale), var(--color-accent-light));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    .glass {
-      background: var(--color-surface);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-lg);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-    }
-
-    .logo-mark {
-      position: relative;
-      width: 44px;
-      height: 44px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, var(--color-accent), var(--color-accent-light));
-      box-shadow:
-        0 0 0 1px rgba(255,255,255,0.05),
-        0 8px 24px rgba(99,102,241,0.35),
-        0 0 40px rgba(99,102,241,0.18);
-      overflow: hidden;
-      flex-shrink: 0;
-    }
-    .logo-mark::before, .logo-mark::after {
-      content: "";
-      position: absolute;
-      width: 13px;
-      height: 21px;
-      border: 2.5px solid rgba(255,255,255,0.9);
-      border-radius: 999px;
-    }
-    .logo-mark::before { left: 10px; top: 11px; transform: rotate(-35deg); }
-    .logo-mark::after { right: 10px; top: 11px; transform: rotate(-35deg); }
-
-    .input-shell {
-      position: relative;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--color-surface);
-      border: 1px solid var(--color-border);
-      border-radius: 12px;
-      padding: 4px 14px;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    }
-    .input-shell:focus-within {
-      border-color: rgba(99, 102, 241, 0.4);
-      box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
-    }
-
-    .input-field {
-      background: transparent;
-      border: none;
-      color: var(--color-text);
-      font-size: 14px;
-      width: 100%;
-      height: 48px;
-      font-family: var(--font-sans);
-    }
-    .input-field::placeholder { color: var(--color-text-dim); }
-    .input-field:focus { outline: none; }
-
-    .btn-primary {
-      position: relative;
-      background: linear-gradient(135deg, var(--color-accent), var(--color-accent-light));
-      color: #fff;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 14px;
-      transition: filter 0.2s ease, transform 0.15s ease, box-shadow 0.3s ease;
-      overflow: hidden;
-      box-shadow: 0 16px 60px -15px rgba(99,102,241,0.55);
-    }
-    .btn-primary:hover { filter: brightness(1.12); }
-    .btn-primary:active { transform: scale(0.98); }
-    .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
-    .btn-primary::before {
-      content: "";
-      position: absolute;
-      top: 0; left: -75%;
-      width: 50%; height: 100%;
-      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.35), transparent);
-      transform: skewX(-20deg);
-      transition: left 0.7s ease;
-    }
-    .btn-primary:hover::before { left: 130%; }
-
-    .field-label {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--color-text-muted);
-    }
-
-    .lf-root button:focus-visible,
-    .lf-root input:focus-visible {
-      outline: 2px solid var(--color-accent-light);
-      outline-offset: 2px;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      * { animation: none !important; transition: none !important; }
-    }
-  `}</style>
-);
+// import signupUser from "../../lib/signup";
 
 const EASE: Easing = [0.22, 1, 0.36, 1] as unknown as Easing;
 
+const GoogleIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
+    <path
+      fill="#FFC107"
+      d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"
+    />
+    <path
+      fill="#FF3D00"
+      d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"
+    />
+    <path
+      fill="#4CAF50"
+      d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"
+    />
+    <path
+      fill="#1976D2"
+      d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"
+    />
+  </svg>
+);
+
 export default function SignupPage() {
-  const [showPassword, setShowPassword] =
-    useState(false);
-
-  const [
-    showConfirmPassword,
-    setShowConfirmPassword,
-  ] = useState(false);
-
-  const [username, setUsername] =
-    useState("");
-
-  const [email, setEmail] =
-    useState("");
-
-  const [password, setPassword] =
-    useState("");
-
-  const [
-    confirmPassword,
-    setConfirmPassword,
-  ] = useState("");
-
-  const [loading, setLoading] =
-    useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   const router = useRouter();
 
@@ -205,10 +58,7 @@ export default function SignupPage() {
       uppercase: /[A-Z]/.test(password),
       lowercase: /[a-z]/.test(password),
       number: /[0-9]/.test(password),
-      special:
-        /[!@#$%^&*(),.?":{}|<>]/.test(
-          password
-        ),
+      special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
     }),
     [password]
   );
@@ -219,428 +69,267 @@ export default function SignupPage() {
     password === confirmPassword;
 
   const allValid =
-    Object.values(passwordChecks).every(
-      Boolean
-    ) && passwordsMatch;
+    Object.values(passwordChecks).every(Boolean) && passwordsMatch;
 
-//   async function handleSubmit(
-//     e: React.FormEvent<HTMLFormElement>
-//   ) {
-//     e.preventDefault();
+  const checklistItems = [
+    { label: "At least 8 characters", valid: passwordChecks.minLength },
+    { label: "One uppercase letter", valid: passwordChecks.uppercase },
+    { label: "One lowercase letter", valid: passwordChecks.lowercase },
+    { label: "One number", valid: passwordChecks.number },
+    { label: "One special character", valid: passwordChecks.special },
+    { label: "Passwords match", valid: passwordsMatch },
+  ];
 
-//     if (
-//       !username.trim() ||
-//       !email.trim() ||
-//       !password.trim()
-//     ) {
-//       toast.error(
-//         "Please fill all fields"
-//       );
-//       return;
-//     }
+  // const handleGoogleAuth = () => {
+  //   setGoogleLoading(true);
+  //   window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/google`;
+  // };
 
-//     if (password !== confirmPassword) {
-//       toast.error(
-//         "Password does not match"
-//       );
-//       return;
-//     }
+  // async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  //   e.preventDefault();
 
-//     try {
-//       setLoading(true);
+  //   if (!username.trim() || !email.trim() || !password.trim()) {
+  //     toast.error("Please fill all fields");
+  //     return;
+  //   }
 
-//       const response =
-//         await signupUser({
-//           username:
-//             username.trim(),
-//           email: email
-//             .trim()
-//             .toLowerCase(),
-//           password,
-//         });
+  //   if (!allValid) {
+  //     toast.error("Please meet all password requirements");
+  //     return;
+  //   }
 
-//       toast.success(
-//         response.message ||
-//           "Account created successfully"
-//       );
+  //   try {
+  //     setLoading(true);
 
-//       router.push("/signin");
-//     } catch (error: any) {
-//       toast.error(
-//         error.message ||
-//           "Something went wrong"
-//       );
-//     } finally {
-//       setLoading(false);
-//     }
-//   }
+  //     // const response = await signupUser({
+  //     //   username: username.trim(),
+  //     //   email: email.trim().toLowerCase(),
+  //     //   password,
+  //     // });
+
+  //     toast.success(response.message || "Account created successfully");
+
+  //     router.push("/signin");
+  //   } catch (error: any) {
+  //     toast.error(error.message || "Something went wrong");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }
 
   return (
-    <div className="lf-root">
-      <ThemeStyles />
-
-      <main className="auth relative flex min-h-screen items-center justify-center px-6 py-14">
-        <div className="absolute inset-0 pointer-events-none">
-          <motion.div
-            animate={{
-              x: [0, 40, 0],
-              y: [0, -30, 0],
-            }}
-            transition={{
-              duration: 16,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="absolute left-[-10%] top-[10%] h-[380px] w-[380px] rounded-full"
-            style={{
-              background:
-                "rgba(99,102,241,0.16)",
-              filter: "blur(80px)",
-            }}
-          />
-
-          <motion.div
-            animate={{
-              x: [0, -40, 0],
-              y: [0, 40, 0],
-            }}
-            transition={{
-              duration: 19,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="absolute right-[-10%] bottom-[-10%] h-[420px] w-[420px] rounded-full"
-            style={{
-              background:
-                "rgba(129,140,248,0.14)",
-              filter: "blur(90px)",
-            }}
-          />
-        </div>
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-bg px-4 py-12 sm:px-6">
+      <div className="absolute inset-0 pointer-events-none">
+        <div
+          className="absolute inset-0 opacity-35"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.04) 1px, transparent 0)",
+            backgroundSize: "32px 32px",
+          }}
+        />
 
         <motion.div
-          initial={{
-            opacity: 0,
-            y: 40,
-            scale: 0.97,
-            filter: "blur(12px)",
-          }}
-          animate={{
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            filter: "blur(0px)",
-          }}
-          transition={{
-            duration: 1.2,
-            ease: EASE,
-          }}
-          className="relative z-10 w-full max-w-md"
-        >
-          <div className="glass relative overflow-hidden p-7 sm:p-9">
-            <div className="relative flex flex-col">
-              <div className="mb-7 flex flex-col items-center text-center">
-                <div className="logo-mark mb-4" />
+          animate={{ x: [0, 40, 0], y: [0, -30, 0] }}
+          transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute left-[-10%] top-[10%] h-[320px] w-[320px] rounded-full bg-accent/[0.16] blur-[80px] sm:h-[380px] sm:w-[380px]"
+        />
 
-                <h1 className="text-[2rem] font-bold tracking-[-0.04em]">
-                  Create account
-                </h1>
+        <motion.div
+          animate={{ x: [0, -40, 0], y: [0, 40, 0] }}
+          transition={{ duration: 19, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute right-[-10%] bottom-[-10%] h-[360px] w-[360px] rounded-full bg-accent-light/[0.14] blur-[90px] sm:h-[420px] sm:w-[420px]"
+        />
+      </div>
 
-                <p
-                  className="mt-2.5 text-[15px] leading-relaxed"
-                  style={{
-                    color:
-                      "var(--color-text-muted)",
-                  }}
-                >
-                  Start forging smarter
-                  links in seconds.
-                </p>
+      <motion.div
+        initial={{ opacity: 0, y: 40, scale: 0.97, filter: "blur(12px)" }}
+        animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+        transition={{ duration: 1.2, ease: EASE }}
+        className="relative z-10 w-full max-w-md"
+      >
+        <div className="glass relative overflow-hidden p-6 sm:p-9">
+          <div className="relative flex flex-col">
+            <div className="mb-7 flex flex-col items-center text-center">
+              <div className="logo-mark mb-4" />
+
+              <h1 className="text-[1.75rem] font-bold tracking-[-0.04em] text-text sm:text-[2rem]">
+                Create account
+              </h1>
+
+              <p className="mt-2.5 text-[15px] leading-relaxed text-text-muted">
+                Start forging smarter links in seconds.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              disabled={googleLoading}
+              className="flex cursor-pointer h-12 w-full items-center justify-center gap-2.5 rounded-xl border border-border bg-surface text-sm font-medium text-text transition-colors duration-200 hover:border-border-hover hover:bg-white/[0.06] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {googleLoading ? (
+                <motion.span
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 0.9, repeat: Infinity, ease: "linear" }}
+                  className="inline-block h-3.5 w-3.5 rounded-full border-2 border-white/20"
+                  style={{ borderTopColor: "var(--color-text-muted)" }}
+                />
+              ) : (
+                <>
+                  <GoogleIcon />
+                  Continue with Google
+                </>
+              )}
+            </button>
+
+            <div className="my-6 flex items-center gap-3">
+              <div className="h-px flex-1 bg-border" />
+              <span className="text-[11px] font-medium uppercase tracking-wider text-text-dim">
+                or continue with email
+              </span>
+              <div className="h-px flex-1 bg-border" />
+            </div>
+
+            <form className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-text-muted">
+                  Username
+                </label>
+
+                <div className="input-shell w-full">
+                  <User size={17} className="text-text-dim" />
+                  <input
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    type="text"
+                    placeholder="krishna"
+                    className="input-field"
+                  />
+                </div>
               </div>
 
-              <form
-                // onSubmit={handleSubmit}
-                className="space-y-4"
-              >
-                <div className="space-y-2">
-  <label className="field-label">
-    Username
-  </label>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-text-muted">
+                  Email address
+                </label>
 
-  <div className="input-shell">
-    <User
-      size={17}
-      style={{
-        color: "var(--color-text-dim)",
-      }}
-    />
+                <div className="input-shell w-full">
+                  <Mail size={17} className="text-text-dim" />
+                  <input
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    type="email"
+                    placeholder="you@company.com"
+                    className="input-field"
+                  />
+                </div>
+              </div>
 
-    <input
-      value={username}
-      onChange={(e) =>
-        setUsername(e.target.value)
-      }
-      type="text"
-      placeholder="krishna"
-      className="input-field"
-    />
-  </div>
-</div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-text-muted">
+                  Password
+                </label>
 
-<div className="space-y-2">
-  <label className="field-label">
-    Email address
-  </label>
+                <div className="input-shell w-full">
+                  <Lock size={17} className="text-text-dim" />
+                  <input
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Create password"
+                    className="input-field"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="shrink-0 text-text-dim transition-colors duration-300 hover:text-text"
+                  >
+                    {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+                  </button>
+                </div>
+              </div>
 
-  <div className="input-shell">
-    <Mail
-      size={17}
-      style={{
-        color: "var(--color-text-dim)",
-      }}
-    />
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-text-muted">
+                  Confirm password
+                </label>
 
-    <input
-      value={email}
-      onChange={(e) =>
-        setEmail(e.target.value)
-      }
-      type="email"
-      placeholder="you@company.com"
-      className="input-field"
-    />
-  </div>
-</div>
+                <div className="input-shell w-full">
+                  <Lock size={17} className="text-text-dim" />
+                  <input
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder="Confirm password"
+                    className="input-field"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="shrink-0 text-text-dim transition-colors duration-300 hover:text-text"
+                  >
+                    {showConfirmPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+                  </button>
+                </div>
+              </div>
 
-<div className="space-y-2">
-  <label className="field-label">
-    Password
-  </label>
+              <div className="rounded-2xl border border-border bg-surface p-4">
+                <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                  {checklistItems.map((item) => (
+                    <div key={item.label} className="flex items-center gap-3">
+                      <div
+                        className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full transition-colors duration-300 ${
+                          item.valid
+                            ? "bg-success/20 text-success"
+                            : "bg-rose-500/10 text-rose-400"
+                        }`}
+                      >
+                        {item.valid ? <Check size={12} /> : <X size={12} />}
+                      </div>
 
-  <div className="input-shell">
-    <Lock
-      size={17}
-      style={{
-        color: "var(--color-text-dim)",
-      }}
-    />
+                      <span
+                        className={`text-[13px] transition-colors duration-300 ${
+                          item.valid ? "text-text" : "text-text-muted"
+                        }`}
+                      >
+                        {item.label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
-    <input
-      value={password}
-      onChange={(e) =>
-        setPassword(e.target.value)
-      }
-      type={
-        showPassword
-          ? "text"
-          : "password"
-      }
-      placeholder="Create password"
-      className="input-field"
-    />
-
-    <button
-      type="button"
-      onClick={() =>
-        setShowPassword(
-          !showPassword
-        )
-      }
-      className="shrink-0"
-      style={{
-        color:
-          "var(--color-text-dim)",
-      }}
-    >
-      {showPassword ? (
-        <EyeOff size={17} />
-      ) : (
-        <Eye size={17} />
-      )}
-    </button>
-  </div>
-</div>
-
-<div className="space-y-2">
-  <label className="field-label">
-    Confirm Password
-  </label>
-
-  <div className="input-shell">
-    <Lock
-      size={17}
-      style={{
-        color: "var(--color-text-dim)",
-      }}
-    />
-
-    <input
-      value={confirmPassword}
-      onChange={(e) =>
-        setConfirmPassword(
-          e.target.value
-        )
-      }
-      type={
-        showConfirmPassword
-          ? "text"
-          : "password"
-      }
-      placeholder="Confirm password"
-      className="input-field"
-    />
-
-    <button
-      type="button"
-      onClick={() =>
-        setShowConfirmPassword(
-          !showConfirmPassword
-        )
-      }
-      className="shrink-0"
-      style={{
-        color:
-          "var(--color-text-dim)",
-      }}
-    >
-      {showConfirmPassword ? (
-        <EyeOff size={17} />
-      ) : (
-        <Eye size={17} />
-      )}
-    </button>
-  </div>
-</div>
-
-<div className="glass p-4">
-  <div className="space-y-2.5">
-    {[
-      {
-        label:
-          "At least 8 characters",
-        valid:
-          passwordChecks.minLength,
-      },
-      {
-        label:
-          "One uppercase letter",
-        valid:
-          passwordChecks.uppercase,
-      },
-      {
-        label:
-          "One lowercase letter",
-        valid:
-          passwordChecks.lowercase,
-      },
-      {
-        label: "One number",
-        valid:
-          passwordChecks.number,
-      },
-      {
-        label:
-          "One special character",
-        valid:
-          passwordChecks.special,
-      },
-      {
-        label:
-          "Passwords match",
-        valid: passwordsMatch,
-      },
-    ].map((item) => (
-      <div
-        key={item.label}
-        className="flex items-center gap-3"
-      >
-        <div
-          className={`flex h-5 w-5 items-center justify-center rounded-full ${
-            item.valid
-              ? "bg-emerald-500/20 text-emerald-500"
-              : "bg-rose-500/10 text-rose-500"
-          }`}
-        >
-          {item.valid ? (
-            <Check size={12} />
-          ) : (
-            <X size={12} />
-          )}
-        </div>
-
-        <span
-          style={{
-            color: item.valid
-              ? "var(--color-text)"
-              : "var(--color-text-muted)",
-          }}
-          className="text-[13px]"
-        >
-          {item.label}
-        </span>
-      </div>
-    ))}
-  </div>
-</div>
-
-<motion.button
+             <motion.button
   disabled={!allValid || loading}
   type="submit"
   whileTap={{ scale: 0.98 }}
-  className="btn-primary mt-2 h-12 w-full inline-flex items-center justify-center gap-2"
+  className="btn-primary cursor-pointer mt-2 h-12 w-full inline-flex items-center justify-center gap-2 transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-40 disabled:saturate-50 disabled:shadow-none disabled:hover:brightness-100"
 >
-  {loading ? (
-    <motion.span
-      animate={{ rotate: 360 }}
-      transition={{
-        duration: 0.9,
-        repeat: Infinity,
-        ease: "linear",
-      }}
-      style={{
-        width: 14,
-        height: 14,
-        borderRadius: "50%",
-        border:
-          "2px solid rgba(255,255,255,0.35)",
-        borderTopColor: "#fff",
-        display: "inline-block",
-      }}
-    />
-  ) : (
-    <>
-      Create Account
-      <ArrowRight size={17} />
-    </>
-  )}
-</motion.button>
-                {/* Username */}
-                {/* Email */}
-                {/* Password */}
-                {/* Confirm Password */}
-                {/* Checklist */}
-                {/* Submit Button */}
-              </form>
+                {loading ? (
+                  <motion.span
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 0.9, repeat: Infinity, ease: "linear" }}
+                    className="inline-block h-3.5 w-3.5 rounded-full border-2 border-white/35"
+                    style={{ borderTopColor: "#fff" }}
+                  />
+                ) : (
+                  <>
+                    Create account
+                    <ArrowRight size={17} />
+                  </>
+                )}
+              </motion.button>
+            </form>
 
-              <p
-                className="mt-6 text-center text-sm"
-                style={{
-                  color:
-                    "var(--color-text-muted)",
-                }}
-              >
-                Already have an account?{" "}
-                <Link
-                  href="/signin"
-                  className="font-medium gradient-text"
-                >
-                  Sign in
-                </Link>
-              </p>
-            </div>
+            <p className="mt-6 text-center text-sm text-text-muted">
+              Already have an account?{" "}
+              <Link href="/signin" className="font-medium gradient-text">
+                Sign in
+              </Link>
+            </p>
           </div>
-        </motion.div>
-      </main>
-    </div>
+        </div>
+      </motion.div>
+    </main>
   );
 }
