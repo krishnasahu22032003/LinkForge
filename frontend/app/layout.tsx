@@ -5,6 +5,7 @@ import { Metadata } from "next";
 import Footer from "@/components/ui/Footer";
 import { Toaster } from "sonner";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import ENV_SECRETS from "@/lib/ENV";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -20,7 +21,7 @@ export default function RootLayout({
     <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <body>
         <GoogleOAuthProvider
-          clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}
+          clientId={ENV_SECRETS.GOOGLE_CLIENT_ID as string}
         >
           {children}
           <Toaster richColors position="top-center" />

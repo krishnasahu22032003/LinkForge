@@ -16,6 +16,8 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { SignUp } from "@/lib/signup";
+import { GoogleLogin } from "@react-oauth/google";
+import GoogleAuth from "@/lib/google-auth";
 
 const EASE: Easing = [0.22, 1, 0.36, 1] as unknown as Easing;
 
@@ -163,25 +165,37 @@ const cleanedEmail =email.trim().toLowerCase();
               </p>
             </div>
 
-            <button
-              type="button"
-              disabled={googleLoading}
-              className="flex cursor-pointer h-12 w-full items-center justify-center gap-2.5 rounded-xl border border-border bg-surface text-sm font-medium text-text transition-colors duration-200 hover:border-border-hover hover:bg-white/[0.06] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {googleLoading ? (
-                <motion.span
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 0.9, repeat: Infinity, ease: "linear" }}
-                  className="inline-block h-3.5 w-3.5 rounded-full border-2 border-white/20"
-                  style={{ borderTopColor: "var(--color-text-muted)" }}
-                />
-              ) : (
-                <>
-                  <GoogleIcon />
-                  Continue with Google
-                </>
-              )}
-            </button>
+         <GoogleLogin
+           theme="filled_black"
+           size="large"
+  onSuccess={async (credentialResponse) => {
+    try {
+      setGoogleLoading(true);
+
+      const credential =
+        credentialResponse.credential;
+        console.log(credentialResponse);
+console.log(credentialResponse.credential);
+
+      if (!credential) {
+        throw new Error("Missing credential");
+      }
+
+      await GoogleAuth(credential);
+
+      toast.success("Signed in successfully");
+          
+      router.push("/dashboard");
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setGoogleLoading(false);
+    }
+  }}
+  onError={() => {
+    toast.error("Google login failed");
+  }}
+/>
 
             <div className="my-6 flex items-center gap-3">
               <div className="h-px flex-1 bg-border" />
