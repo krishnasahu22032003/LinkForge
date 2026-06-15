@@ -98,11 +98,15 @@ const ThemeStyles = () => (
       border: 1px solid var(--color-border);
       border-radius: 12px;
       padding: 4px 14px;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    }
+    .input-shell:hover {
+      border-color: var(--color-border-hover);
     }
     .input-shell:focus-within {
-      border-color: rgba(99, 102, 241, 0.4);
-      box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+      border-color: rgba(99, 102, 241, 0.5);
+      background: rgba(99, 102, 241, 0.04);
+      box-shadow: 0 0 0 4px rgba(99,102,241,0.14);
     }
 
     .input-field {
@@ -115,7 +119,11 @@ const ThemeStyles = () => (
       font-family: var(--font-sans);
     }
     .input-field::placeholder { color: var(--color-text-dim); }
-    .input-field:focus { outline: none; }
+    .input-field:focus,
+    .input-field:focus-visible {
+      outline: none;
+      box-shadow: none;
+    }
 
     .btn-primary {
       position: relative;
@@ -149,9 +157,11 @@ const ThemeStyles = () => (
     }
 
     .lf-root button:focus-visible,
-    .lf-root input:focus-visible {
+    .lf-root a:focus-visible,
+    .lf-root input:focus-visible:not(.input-field) {
       outline: 2px solid var(--color-accent-light);
       outline-offset: 2px;
+      border-radius: 8px;
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -207,7 +217,7 @@ export default function SigninPage() {
                 </p>
               </div>
 
-              <form  className="space-y-4">
+              <form className="space-y-4">
                 <div className="space-y-2">
                   <label className="field-label">Email address</label>
                   <div className="input-shell">
@@ -248,13 +258,14 @@ export default function SigninPage() {
                   disabled={loading}
                   type="submit"
                   whileTap={{ scale: 0.98 }}
-                  className="btn-primary mt-2 h-12 w-full inline-flex items-center justify-center gap-2"
+                  className="btn-primary cursor-pointer mt-2 h-12 w-full inline-flex items-center justify-center gap-2"
                 >
                   {loading ? (
                     <motion.span
                       animate={{ rotate: 360 }}
                       transition={{ duration: 0.9, repeat: Infinity, ease: "linear" }}
                       style={{
+                        
                         width: 14,
                         height: 14,
                         borderRadius: "50%",
