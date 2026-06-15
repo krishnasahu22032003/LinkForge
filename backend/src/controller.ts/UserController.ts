@@ -1,12 +1,12 @@
 import type { Request, Response } from "express";
-import { SignInSchema, SignUpSchema, UpdateUserSchema, VerifyEmailSchema } from "../validatons/auth.schema.js";
+import { SignInSchema, SignUpSchema, UpdateUserSchema, VerifyEmailSchema } from "../validators/auth.schema.js";
 import bcrypt from "bcrypt";
 import { prisma } from "../lib/prisma.js";
 import crypto from "crypto";
 import { sendVerificationEmail } from "../services/email.service.js";
 import { generateToken } from "../lib/jwt.js";
 import { AUTH_COOKIE_NAME, AUTH_COOKIE_OPTIONS } from "../config/cookie.js";
-import { GoogleAuthSchema } from "../validatons/google.schema.js";
+import { GoogleAuthSchema } from "../validators/google.schema.js";
 import { googleClient } from "../lib/google.js";
 import ENV_SECRETS from "../lib/ENV.js";
 import { LoginTicket } from "google-auth-library";

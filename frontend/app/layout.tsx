@@ -4,6 +4,7 @@ import "./globals.css";
 import { Metadata } from "next";
 import Footer from "@/components/ui/Footer";
 import { Toaster } from "sonner";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,11 +17,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-     <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
+    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <body>
-        {children}
-        <Toaster richColors position="top-center"/>
-                 <Footer/></body>
+        <GoogleOAuthProvider
+          clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}
+        >
+          {children}
+          <Toaster richColors position="top-center" />
+          <Footer />
+        </GoogleOAuthProvider>
+      </body>
     </html>
   );
 }

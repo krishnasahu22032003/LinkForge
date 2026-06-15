@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { createShortUrlSchema } from "../validatons/url.schema.js";
+import { createShortUrlSchema } from "../validators/url.schema.js";
 import { prisma } from "../lib/prisma.js";
 import generateShortCode from "../lib/shortcode.js";
 import ENV_SECRETS from "../lib/ENV.js";
