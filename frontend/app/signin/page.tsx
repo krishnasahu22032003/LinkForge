@@ -6,6 +6,7 @@ import { ArrowRight, Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import SignIn from "@/lib/signin";
 
 const ThemeStyles = () => (
   <style>{`
@@ -179,6 +180,35 @@ export default function SigninPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  async function handleSubmit(e:React.FormEvent<HTMLFormElement>){
+
+    e.preventDefault() ;
+
+    if(!email.trim() || !password.trim()){
+ toast.error("Please fill all fields");
+      return;
+    };
+
+    const cleanedEmail = email.trim().toLowerCase();
+
+    try{
+      setLoading(true)
+
+      const response = await SignIn({
+        email,
+        password
+      });
+
+      toast.success(response.message || "Account created successfully");
+
+      router.push("/dashboard");
+    }catch (error: any) {
+      toast.error(error.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    };
+  };
+
   return (
     <div className="lf-root">
       <ThemeStyles />
@@ -217,7 +247,7 @@ export default function SigninPage() {
                 </p>
               </div>
 
-              <form className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
                   <label className="field-label">Email address</label>
                   <div className="input-shell">
