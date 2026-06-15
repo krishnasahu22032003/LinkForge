@@ -15,7 +15,7 @@ import {
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-// import signupUser from "../../lib/signup";
+import { SignUp } from "@/lib/signup";
 
 const EASE: Easing = [0.22, 1, 0.36, 1] as unknown as Easing;
 
@@ -85,37 +85,38 @@ export default function SignupPage() {
   //   window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/google`;
   // };
 
-  // async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-  //   e.preventDefault();
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
 
-  //   if (!username.trim() || !email.trim() || !password.trim()) {
-  //     toast.error("Please fill all fields");
-  //     return;
-  //   }
+    if (!username.trim() || !email.trim() || !password.trim()) {
+      toast.error("Please fill all fields");
+      return;
+    }
 
-  //   if (!allValid) {
-  //     toast.error("Please meet all password requirements");
-  //     return;
-  //   }
+    if (!allValid) {
+      toast.error("Please meet all password requirements");
+      return;
+    }
 
-  //   try {
-  //     setLoading(true);
+    try {
+      setLoading(true);
 
-  //     // const response = await signupUser({
-  //     //   username: username.trim(),
-  //     //   email: email.trim().toLowerCase(),
-  //     //   password,
-  //     // });
+      const response = await SignUp({
+        username: username.trim(),
+        email: email.trim().toLowerCase(),
+        password,
+      });
 
-  //     toast.success(response.message || "Account created successfully");
+      toast.success(response.message || "Account created successfully");
 
-  //     router.push("/signin");
-  //   } catch (error: any) {
-  //     toast.error(error.message || "Something went wrong");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
+      router.push("/verify-email");
+
+    } catch (error: any) {
+      toast.error(error.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-bg px-4 py-12 sm:px-6">
@@ -190,7 +191,7 @@ export default function SignupPage() {
               <div className="h-px flex-1 bg-border" />
             </div>
 
-            <form className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium text-text-muted">
                   Username
@@ -278,19 +279,17 @@ export default function SignupPage() {
                   {checklistItems.map((item) => (
                     <div key={item.label} className="flex items-center gap-3">
                       <div
-                        className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full transition-colors duration-300 ${
-                          item.valid
+                        className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full transition-colors duration-300 ${item.valid
                             ? "bg-success/20 text-success"
                             : "bg-rose-500/10 text-rose-400"
-                        }`}
+                          }`}
                       >
                         {item.valid ? <Check size={12} /> : <X size={12} />}
                       </div>
 
                       <span
-                        className={`text-[13px] transition-colors duration-300 ${
-                          item.valid ? "text-text" : "text-text-muted"
-                        }`}
+                        className={`text-[13px] transition-colors duration-300 ${item.valid ? "text-text" : "text-text-muted"
+                          }`}
                       >
                         {item.label}
                       </span>
@@ -299,12 +298,12 @@ export default function SignupPage() {
                 </div>
               </div>
 
-             <motion.button
-  disabled={!allValid || loading}
-  type="submit"
-  whileTap={{ scale: 0.98 }}
-  className="btn-primary cursor-pointer mt-2 h-12 w-full inline-flex items-center justify-center gap-2 transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-40 disabled:saturate-50 disabled:shadow-none disabled:hover:brightness-100"
->
+              <motion.button
+                disabled={!allValid || loading}
+                type="submit"
+                whileTap={{ scale: 0.98 }}
+                className="btn-primary cursor-pointer mt-2 h-12 w-full inline-flex items-center justify-center gap-2 transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-40 disabled:saturate-50 disabled:shadow-none disabled:hover:brightness-100"
+              >
                 {loading ? (
                   <motion.span
                     animate={{ rotate: 360 }}
