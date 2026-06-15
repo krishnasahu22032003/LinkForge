@@ -97,19 +97,19 @@ export default function SignupPage() {
       toast.error("Please meet all password requirements");
       return;
     }
-
+const cleanedEmail =email.trim().toLowerCase();
     try {
       setLoading(true);
 
       const response = await SignUp({
         username: username.trim(),
-        email: email.trim().toLowerCase(),
+        email: cleanedEmail,
         password,
       });
 
       toast.success(response.message || "Account created successfully");
 
-      router.push(`/check-email?email=${encodeURIComponent(email.trim())}`);
+      router.push(`/check-email?email=${encodeURIComponent(cleanedEmail)}`);
 
     } catch (error: any) {
       toast.error(error.message || "Something went wrong");
