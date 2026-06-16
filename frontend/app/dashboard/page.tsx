@@ -6,7 +6,7 @@ import UpdateProfileModal from "@/components/ui/UpdateProfileModal";
 
 export default function DashboardPage() {
   const [profileModalOpen, setProfileModalOpen] = useState(false);
-
+  
   const user = {
     username: "John Doe",
     email: "john@example.com",
@@ -14,7 +14,7 @@ export default function DashboardPage() {
   };
 
   async function handleSignOut() {
-    console.log("sign out");
+ 
   }
 
   async function handleUpdateProfile(data: {
@@ -28,11 +28,7 @@ export default function DashboardPage() {
 
   return (
     <>
-      <DashboardHeader
-        user={user}
-        onUpdateProfile={() => setProfileModalOpen(true)}
-        onSignOut={handleSignOut}
-      />
+      <DashboardHeader/>
 
       <UpdateProfileModal
         open={profileModalOpen}

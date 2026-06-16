@@ -1,87 +1,98 @@
 "use client";
 
-import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  ChevronDown,
-  Settings,
-  LogOut,
-  Sparkles,
-} from "lucide-react";
+import { Settings, LogOut } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import Button from "./Button";
+import UserSignOut from "@/lib/signout";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-interface DashboardHeaderProps {
-  user: {
-    username: string;
-    email: string;
-    avatar?: string | null;
-  };
-  onUpdateProfile: () => void;
-  onSignOut: () => void;
-}
+export default function DashboardHeader() {
+    const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [user , setUser] = useState("");
+    const router = useRouter();
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
-export default function DashboardHeader({
-  user,
-  onUpdateProfile,
-  onSignOut,
-}: DashboardHeaderProps) {
-  const [open, setOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+    async function handleSignout() {
 
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target as Node)
-      ) {
-        setOpen(false);
-      }
-    }
+        if (loading) return;
 
-    window.addEventListener("mousedown", handleClick);
+        try {
 
-    return () =>
-      window.removeEventListener("mousedown", handleClick);
-  }, []);
+            setLoading(true);
 
-  return (<div className="fixed inset-x-0 top-2 z-50">
-<motion.header
-  initial={{ y: -20, opacity: 0 }}
-  animate={{ y: 0, opacity: 1 }}
-  transition={{ duration: 0.6 }}
-  className="floating-nav-header w-full"
->
-        <div className="relative rounded-[16px]">
-          <div
-            className="pointer-events-none absolute left-1/2 top-0 h-40 w-40 -translate-x-1/2 rounded-full"
-            style={{
-              background:
-                "rgba(99,102,241,0.18)",
-              filter: "blur(60px)",
-            }}
-          />
+            const response = await UserSignOut();
 
-          <div className="relative flex h-[62px] items-center justify-between px-5 sm:px-10">
-            <div className="flex items-center gap-2 group"> 
- <div className="logo-mark" />
+            toast.success(response.message || "Logout Successfully");
 
-              <span className="text-xl font-bold tracking-[-0.04em]">
-                Link
-                <span className="gradient-text">
-                  Forge
-                </span>
-              </span>
-            </div>
-             
+            router.push("/signin");
+
+        } catch (error: any) {
+
+            toast.error(error.message || "Something Went Wrong")
+
+        } finally {
+
+            setLoading(false);
+
+        };
+    };
+
+    useEffect(() => {
+        function handleClick(e: MouseEvent) {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(e.target as Node)
+            ) {
+                setOpen(false);
+            }
+        }
+
+        window.addEventListener("mousedown", handleClick);
+
+        return () =>
+            window.removeEventListener("mousedown", handleClick);
+    }, []);
+
+    return (<div className="fixed inset-x-0 top-2 z-50">
+        <motion.header
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6 }}
+            className="floating-nav-header w-full"
+        >
+            <div className="relative rounded-[16px]">
+                <div
+                    className="pointer-events-none absolute left-1/2 top-0 h-40 w-40 -translate-x-1/2 rounded-full"
+                    style={{
+                        background:
+                            "rgba(99,102,241,0.18)",
+                        filter: "blur(60px)",
+                    }}
+                />
+
+                <div className="relative flex h-[62px] items-center justify-between px-5 sm:px-10">
+                    <div className="flex items-center gap-2 group">
+                        <div className="logo-mark" />
+
+                        <span className="text-xl font-bold tracking-[-0.04em]">
+                            Link
+                            <span className="gradient-text">
+                                Forge
+                            </span>
+                        </span>
+                    </div>
 
 
-<div ref={dropdownRef} className="relative">
-  <motion.button
-    whileHover={{ scale: 1.05 }}
-    whileTap={{ scale: 0.96 }}
-    onClick={() =>{console.log("clicked"),  setOpen(!open)} }
-    className="
+
+                    <div ref={dropdownRef} className="relative">
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.96 }}
+                            onClick={() => { console.log("clicked"), setOpen(!open) }}
+                            className="
       relative
       flex
       h-12
@@ -100,16 +111,16 @@ export default function DashboardHeader({
       hover:bg-[rgba(255,255,255,0.08)]
       hover:shadow-[0_12px_40px_-10px_rgba(99,102,241,0.35)]
     "
-  >
-    {user.avatar ? (
-      <img
-        src={user.avatar}
-        alt={user.username}
-        className="h-9 w-9 rounded-xl object-cover"
-      />
-    ) : (
-      <div
-        className="
+                        >
+                            {user.avatar ? (
+                                <img
+                                    src={user.avatar}
+                                    alt={user.username}
+                                    className="h-9 w-9 rounded-xl object-cover"
+                                />
+                            ) : (
+                                <div
+                                    className="
           flex
           h-9
           w-9
@@ -120,17 +131,17 @@ export default function DashboardHeader({
           font-bold
           text-white
         "
-        style={{
-          background:
-            "linear-gradient(135deg,var(--color-accent),var(--color-accent-light))",
-        }}
-      >
-        {user.username.charAt(0).toUpperCase()}
-      </div>
-    )}
+                                    style={{
+                                        background:
+                                            "linear-gradient(135deg,var(--color-accent),var(--color-accent-light))",
+                                    }}
+                                >
+                                    {user.username.charAt(0).toUpperCase()}
+                                </div>
+                            )}
 
-    <span
-      className="
+                            <span
+                                className="
         absolute
         bottom-0.5
         right-0.5
@@ -141,41 +152,41 @@ export default function DashboardHeader({
         ring-2
         ring-[var(--color-bg)]
       "
-    />
-  </motion.button>
+                            />
+                        </motion.button>
 
-  <AnimatePresence>
-    {open && (
-      <motion.div
-        initial={{
-          opacity: 0,
-          y: 12,
-          scale: 0.96,
-        }}
-        animate={{
-          opacity: 1,
-          y: 0,
-          scale: 1,
-        }}
-        exit={{
-          opacity: 0,
-          y: 8,
-          scale: 0.96,
-        }}
-        transition={{
-          duration: 0.2,
-        }}
-        className="
+                        <AnimatePresence>
+                            {open && (
+                                <motion.div
+                                    initial={{
+                                        opacity: 0,
+                                        y: 12,
+                                        scale: 0.96,
+                                    }}
+                                    animate={{
+                                        opacity: 1,
+                                        y: 0,
+                                        scale: 1,
+                                    }}
+                                    exit={{
+                                        opacity: 0,
+                                        y: 8,
+                                        scale: 0.96,
+                                    }}
+                                    transition={{
+                                        duration: 0.2,
+                                    }}
+                                    className="
           absolute
           right-0
           top-[calc(100%+12px)]
           z-[999]
           w-[340px]
         "
-      >
-        <div className="glass overflow-hidden p-2">
-          <div
-            className="
+                                >
+                                    <div className="glass overflow-hidden p-2">
+                                        <div
+                                            className="
               relative
               overflow-hidden
               rounded-2xl
@@ -184,9 +195,9 @@ export default function DashboardHeader({
               bg-[rgba(255,255,255,0.02)]
               p-5
             "
-          >
-            <div
-              className="
+                                        >
+                                            <div
+                                                className="
                 absolute
                 left-1/2
                 top-0
@@ -195,23 +206,23 @@ export default function DashboardHeader({
                 -translate-x-1/2
                 rounded-full
               "
-              style={{
-                background:
-                  "rgba(99,102,241,0.15)",
-                filter: "blur(40px)",
-              }}
-            />
+                                                style={{
+                                                    background:
+                                                        "rgba(99,102,241,0.15)",
+                                                    filter: "blur(40px)",
+                                                }}
+                                            />
 
-            <div className="relative flex items-center gap-4">
-              {user.avatar ? (
-                <img
-                  src={user.avatar}
-                  alt=""
-                  className="h-14 w-14 rounded-2xl object-cover"
-                />
-              ) : (
-                <div
-                  className="
+                                            <div className="relative flex items-center gap-4">
+                                                {user.avatar ? (
+                                                    <img
+                                                        src={user.avatar}
+                                                        alt=""
+                                                        className="h-14 w-14 rounded-2xl object-cover"
+                                                    />
+                                                ) : (
+                                                    <div
+                                                        className="
                     flex
                     h-14
                     w-14
@@ -222,63 +233,63 @@ export default function DashboardHeader({
                     font-bold
                     text-white
                   "
-                  style={{
-                    background:
-                      "linear-gradient(135deg,var(--color-accent),var(--color-accent-light))",
-                  }}
-                >
-                  {user.username.charAt(0).toUpperCase()}
+                                                        style={{
+                                                            background:
+                                                                "linear-gradient(135deg,var(--color-accent),var(--color-accent-light))",
+                                                        }}
+                                                    >
+                                                        {user.username.charAt(0).toUpperCase()}
+                                                    </div>
+                                                )}
+
+                                                <div className="min-w-0">
+                                                    <p className="text-xs text-[var(--color-text-dim)]">
+                                                        Welcome back
+                                                    </p>
+
+                                                    <h3 className="truncate text-sm font-semibold">
+                                                        {user.username}
+                                                    </h3>
+
+                                                    <p className="truncate text-xs text-[var(--color-text-muted)]">
+                                                        {user.email}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="mt-3 flex flex-col gap-2">
+                                            <Button
+                                                variant="secondary"
+                                                size="md"
+                                                className="w-full justify-start cursor-pointer"
+                                                onClick={() => {
+                                                    setOpen(false);
+                                                    onUpdateProfile();
+                                                }}
+                                            >
+                                                <Settings size={16} />
+                                                Update Profile
+                                            </Button>
+
+                                            <Button
+                                                variant="danger"
+                                                size="md"
+                                                className="w-full justify-start cursor-pointer"
+                                                onClick={handleSignout}
+                                            >
+                                                <LogOut size={16} />
+                                               signout
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
                 </div>
-              )}
-
-              <div className="min-w-0">
-                <p className="text-xs text-[var(--color-text-dim)]">
-                  Welcome back
-                </p>
-
-                <h3 className="truncate text-sm font-semibold">
-                  {user.username}
-                </h3>
-
-                <p className="truncate text-xs text-[var(--color-text-muted)]">
-                  {user.email}
-                </p>
-              </div>
             </div>
-          </div>
-
-          <div className="mt-3 flex flex-col gap-2">
-            <Button
-              variant="secondary"
-              size="md"
-              className="w-full justify-start cursor-pointer"
-              onClick={() => {
-                setOpen(false);
-                onUpdateProfile();
-              }}
-            >
-              <Settings size={16} />
-              Update Profile
-            </Button>
-
-            <Button
-              variant="danger"
-              size="md"
-              className="w-full justify-start cursor-pointer"
-              onClick={onSignOut}
-            >
-              <LogOut size={16} />
-              Sign Out
-            </Button>
-          </div>
-        </div>
-      </motion.div>
-    )}
-  </AnimatePresence>
-</div>
-          </div>
-        </div>
-      </motion.header>
+        </motion.header>
     </div>
-  );
+    );
 }
