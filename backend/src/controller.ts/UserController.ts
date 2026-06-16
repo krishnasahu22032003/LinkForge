@@ -281,7 +281,8 @@ export async function GetUserDetail(req: Request, res: Response) {
             select: {
                 id: true,
                 username: true,
-                email: true
+                email: true,
+                avatar:true
             }
         });
 
