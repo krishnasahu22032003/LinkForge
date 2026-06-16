@@ -275,6 +275,65 @@ body {
   box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
+.floating-nav-header {
+  position: relative;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(17, 17, 22, 0.98),
+      rgba(12, 12, 17, 0.98)
+    );
+
+  border: 1px solid rgba(255,255,255,0.06);
+
+  border-radius: 22px;
+
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.02),
+    0 30px 80px -30px rgba(0,0,0,0.8),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.floating-nav-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(99,102,241,0.06),
+      transparent
+    );
+
+  opacity: 0.8;
+}
+
+.floating-nav-header::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -80px;
+  transform: translateX(-50%);
+
+  width: 400px;
+  height: 200px;
+
+  background: radial-gradient(
+    ellipse,
+    rgba(99,102,241,0.12),
+    transparent 70%
+  );
+
+  pointer-events: none;
+}
+
 .logo-mark {
   position: relative;
   width: 34px;
