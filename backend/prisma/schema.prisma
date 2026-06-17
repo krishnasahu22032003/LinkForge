@@ -54,14 +54,20 @@ model Url {
 }
 
 model Visit {
-id          String      @id @default(cuid())
-shortUrlId  String
-shortUrl    Url         @relation(fields:[shortUrlId], references:[id])
-ipAddress   String?
-userAgent   String?
-visitedAt   DateTime    @default(now())
+  id          String   @id @default(cuid())
+  shortUrlId  String
+  shortUrl    Url      @relation(fields: [shortUrlId], references: [id])
 
-@@index([shortUrlId])
+  ipAddress   String?
+  userAgent   String?
+
+  country     String?
+  city        String?
+  device      String?
+
+  visitedAt   DateTime @default(now())
+
+  @@index([shortUrlId])
 }
 
 enum AuthProvider { 

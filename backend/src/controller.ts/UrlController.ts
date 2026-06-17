@@ -82,6 +82,13 @@ export async function redirectUrl(req: Request, res: Response) {
     });
   }
 
+if (!shortCode || Array.isArray(shortCode)) {
+  return res.status(400).json({
+    success: false,
+    message: "Invalid short code",
+  });
+}
+
   try {
     const cachedUrl = await redis.get(`url:${shortCode}`);
 
@@ -291,6 +298,13 @@ export async function getUrlAnalytics(req: Request, res: Response) {
         message: "Invalid URL id",
       });
     }
+
+    if (!id || Array.isArray(id)) {
+  return res.status(400).json({
+    success: false,
+    message: "Invalid URL id",
+  });
+}
 
     if (!req.userId) {
       return res.status(401).json({
