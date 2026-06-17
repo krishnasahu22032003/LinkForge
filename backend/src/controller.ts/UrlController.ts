@@ -252,11 +252,11 @@ export async function deleteUrl(req: Request,res: Response) {
   };
 };
 
-export async function getUrlAnalytics(req: Request,res: Response) {
+export async function getUrlAnalytics(req: Request, res: Response) {
   try {
     const { id } = req.params;
 
-    if (typeof id !== "string") {
+    if (!id) {
       return res.status(400).json({
         success: false,
         message: "Invalid URL id",
@@ -300,10 +300,14 @@ export async function getUrlAnalytics(req: Request,res: Response) {
       select: {
         id: true,
         ipAddress: true,
-        us: true,
+        userAgent: true,
         visitedAt: true,
       },
     });
+
+    const uniqueVisitors = new Set(
+      visits.map((visit) => visit.ipAddress).filter(Boolean)
+    ).size;
 
     return res.status(200).json({
       success: true,
@@ -313,10 +317,8 @@ export async function getUrlAnalytics(req: Request,res: Response) {
         originalUrl: url.originalUrl,
         totalClicks: url.click,
         totalVisits: visits.length,
-        lastVisited:
-          visits.length > 0
-            ? visits[0]?.visitedAt ?? null
-            : null,
+        uniqueVisitors,
+        lastVisited: visits[0]?.visitedAt ?? null,
         visits,
       },
     });
@@ -327,8 +329,8 @@ export async function getUrlAnalytics(req: Request,res: Response) {
       success: false,
       message: "Internal Server Error",
     });
-  };
-};
+  }
+}
 
 export async function getDashboardStats( req: Request,res: Response) {
   try {
