@@ -7,80 +7,169 @@ import redis from "../lib/redis.js";
 
 
 export async function CreateUrl(req: Request, res: Response) {
+  const parsedData = createShortUrlSchema.safeParse(req.body);
 
-    const parsedData = createShortUrlSchema.safeParse(req.body);
-
-    if (!parsedData.success) {
-        return res.status(400).json({
-            success: false,
-            message: "Invalid Input",
-            error: parsedData.error.flatten()
-        });
-    };
-
-    const { url } = parsedData.data;
-
-    try {
-
-        let code;
-        let existing;
-
-        do {
-            code = generateShortCode();
-
-            existing = await prisma.url.findUnique({
-                where: {
-                    shortCode: code,
-                },
-            });
-        } while (existing);
-
-        const createUrl = await prisma.url.create({
-            data: {
-                originalUrl: url,
-                shortCode: code,
-                userId: req.userId ?? null,
-            }
-        });
-
-        await redis.set(
-            `url:${createUrl.shortCode}`,
-            createUrl.originalUrl)
-
-        const ShortLink = `${ENV_SECRETS.BASE_URL}/api/v1/url/${createUrl.shortCode}`;
-
-        return res.status(201).json({
-            success: true,
-            message: "Short URL created successfully",
-            data: {
-                id: createUrl.id,
-                originalUrl: createUrl.originalUrl,
-                shortCode: createUrl.shortCode,
-                shortUrl: ShortLink,
-                clicks: createUrl.click,
-                createdAt: createUrl.createdAt,
-                ownedByUser: !!createUrl.userId,
-            }
-        });
-
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({
-            success: false,
-            message: "Internal Server Error"
-        });
-    };
-};
-
-export async function redirectUrl(req: Request, res: Response) {
-  const { shortCode } = req.params;
-
-  if (!shortCode) {
+  if (!parsedData.success) {
     return res.status(400).json({
       success: false,
-      message: "Invalid short code",
+      message: "Invalid Input",
+      error: parsedData.error.flatten(),
     });
   }
+
+  const { url } = parsedData.data;
+
+  try {
+    // ==========================
+    // Check Redis Cache
+    // ==========================
+
+    const cachedCode = await redis.get(`original:${url}`);
+
+    if (cachedCode) {
+      console.log("REDIS HIT");
+
+      const existingUrl = await prisma.url.findUnique({
+        where: {
+          shortCode: cachedCode as string,
+        },
+      });
+
+      if (existingUrl) {
+        return res.status(200).json({
+          success: true,
+          message: "URL already exists",
+          data: {
+            id: existingUrl.id,
+            originalUrl: existingUrl.originalUrl,
+            shortCode: existingUrl.shortCode,
+            shortUrl: `${ENV_SECRETS.BASE_URL}/api/v1/url/${existingUrl.shortCode}`,
+            clicks: existingUrl.click,
+            createdAt: existingUrl.createdAt,
+            ownedByUser: !!existingUrl.userId,
+          },
+        });
+      }
+    }
+
+    console.log("REDIS MISS");
+
+    // ==========================
+    // Check Database
+    // ==========================
+
+    const existingUrl = await prisma.url.findFirst({
+      where: {
+        originalUrl: url,
+        userId: req.userId ?? null,
+      },
+    });
+
+    if (existingUrl) {
+      await Promise.all([
+        redis.set(
+          `original:${url}`,
+          existingUrl.shortCode
+        ),
+        redis.set(
+          `url:${existingUrl.shortCode}`,
+          existingUrl.originalUrl
+        ),
+      ]);
+
+      return res.status(200).json({
+        success: true,
+        message: "URL already exists",
+        data: {
+          id: existingUrl.id,
+          originalUrl: existingUrl.originalUrl,
+          shortCode: existingUrl.shortCode,
+          shortUrl: `${ENV_SECRETS.BASE_URL}/api/v1/url/${existingUrl.shortCode}`,
+          clicks: existingUrl.click,
+          createdAt: existingUrl.createdAt,
+          ownedByUser: !!existingUrl.userId,
+        },
+      });
+    }
+
+    // ==========================
+    // Generate Unique Short Code
+    // ==========================
+
+    let code: string;
+    let shortCodeExists;
+
+    do {
+      code = generateShortCode();
+
+      shortCodeExists = await prisma.url.findUnique({
+        where: {
+          shortCode: code,
+        },
+      });
+    } while (shortCodeExists);
+
+    // ==========================
+    // Create URL
+    // ==========================
+
+    const createUrl = await prisma.url.create({
+      data: {
+        originalUrl: url,
+        shortCode: code,
+        userId: req.userId ?? null,
+      },
+    });
+
+    // ==========================
+    // Cache Mappings
+    // ==========================
+
+    await Promise.all([
+      redis.set(
+        `original:${url}`,
+        createUrl.shortCode
+      ),
+
+      redis.set(
+        `url:${createUrl.shortCode}`,
+        createUrl.originalUrl
+      ),
+    ]);
+
+    const shortLink =
+      `${ENV_SECRETS.BASE_URL}/api/v1/url/${createUrl.shortCode}`;
+
+    // ==========================
+    // Return Response
+    // ==========================
+
+    return res.status(201).json({
+      success: true,
+      message: "Short URL created successfully",
+      data: {
+        id: createUrl.id,
+        originalUrl: createUrl.originalUrl,
+        shortCode: createUrl.shortCode,
+        shortUrl: shortLink,
+        clicks: createUrl.click,
+        createdAt: createUrl.createdAt,
+        ownedByUser: !!createUrl.userId,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+}
+
+export async function redirectUrl(req: Request, res: Response) {
+
+  const { shortCode } = req.params;
 
 if (!shortCode || Array.isArray(shortCode)) {
   return res.status(400).json({
@@ -206,7 +295,7 @@ export async function getUserUrls(req: Request, res: Response) {
             id: url.id,
             originalUrl: url.originalUrl,
             shortCode: url.shortCode,
-            shortUrl: `${ENV_SECRETS.BASE_URL}/${url.shortCode}`,
+            shortUrl: `${ENV_SECRETS.BASE_URL}/api/v1/url/${url.shortCode}`,
             clicks: url.click, 
             createdAt: url.createdAt,
         }));
@@ -265,8 +354,10 @@ export async function deleteUrl(req: Request,res: Response) {
         message: "You do not have permission to delete this URL",
       });
     }
-
-    await redis.del(`url:${url.shortCode}`);
+await Promise.all([
+  redis.del(`url:${url.shortCode}`),
+  redis.del(`original:${url.originalUrl}`)
+]);
 
     await prisma.url.delete({
       where: {
@@ -290,14 +381,8 @@ export async function deleteUrl(req: Request,res: Response) {
 
 export async function getUrlAnalytics(req: Request, res: Response) {
   try {
-    const { id } = req.params;
 
-    if (!id) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid URL id",
-      });
-    }
+    const { id } = req.params;
 
     if (!id || Array.isArray(id)) {
   return res.status(400).json({
