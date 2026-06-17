@@ -1,3 +1,4 @@
+import AnalyticsModal from "@/components/ui/AnalyticsModal";
 import DashboardHeader from "@/components/ui/DashboardHeader";
 import DashboardStats from "@/components/ui/Dashboardstat";
 import UrlCard from "@/components/ui/UrlCard";
@@ -96,6 +97,11 @@ async function handleAnalytics(id: string) {
   urls={urls}
   onDelete={handleDelete}
   onAnalytics={handleAnalytics}
+/>
+<AnalyticsModal
+  open={analyticsOpen}
+  analytics={analytics}
+  onClose={() => setAnalyticsOpen(false)}
 />
             </main>
         </>

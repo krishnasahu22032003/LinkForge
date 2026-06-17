@@ -3,6 +3,7 @@
 import { AnimatePresence } from "framer-motion";
 import UrlCard from "./UrlCard";
 import Button from "./Button";
+import AnalyticsModal from "./AnalyticsModal";
 
 interface Props {
   urls: Url[];
