@@ -20,10 +20,6 @@ export async function CreateUrl(req: Request, res: Response) {
   const { url } = parsedData.data;
 
   try {
-    // ==========================
-    // Check Redis Cache
-    // ==========================
-
     const cachedCode = await redis.get(`original:${url}`);
 
     if (cachedCode) {
@@ -53,10 +49,6 @@ export async function CreateUrl(req: Request, res: Response) {
     }
 
     console.log("REDIS MISS");
-
-    // ==========================
-    // Check Database
-    // ==========================
 
     const existingUrl = await prisma.url.findFirst({
       where: {
@@ -92,10 +84,6 @@ export async function CreateUrl(req: Request, res: Response) {
       });
     }
 
-    // ==========================
-    // Generate Unique Short Code
-    // ==========================
-
     let code: string;
     let shortCodeExists;
 
@@ -109,10 +97,6 @@ export async function CreateUrl(req: Request, res: Response) {
       });
     } while (shortCodeExists);
 
-    // ==========================
-    // Create URL
-    // ==========================
-
     const createUrl = await prisma.url.create({
       data: {
         originalUrl: url,
@@ -120,10 +104,6 @@ export async function CreateUrl(req: Request, res: Response) {
         userId: req.userId ?? null,
       },
     });
-
-    // ==========================
-    // Cache Mappings
-    // ==========================
 
     await Promise.all([
       redis.set(
@@ -139,10 +119,6 @@ export async function CreateUrl(req: Request, res: Response) {
 
     const shortLink =
       `${ENV_SECRETS.BASE_URL}/api/v1/url/${createUrl.shortCode}`;
-
-    // ==========================
-    // Return Response
-    // ==========================
 
     return res.status(201).json({
       success: true,
