@@ -14,7 +14,7 @@ import CreateUrlModal from "./CreateLinkModal";
 import CreateNewUrl, { ShortUrlData } from "@/lib/createUrl";
 
 interface DashboardHeaderProps {
-  onUrlCreated: () => Promise<void>;
+    onUrlCreated: () => Promise<void>;
 }
 
 interface User {
@@ -50,7 +50,7 @@ function ProfileSkeleton() {
 }
 
 export default function DashboardHeader({
-  onUrlCreated,
+    onUrlCreated,
 }: DashboardHeaderProps) {
     const [open, setOpen] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
@@ -70,6 +70,7 @@ export default function DashboardHeader({
             setLoadingUser(true);
             const res = await GetUserDetail();
             setUserdata(res.data);
+
         } catch (error: any) {
             toast.error(error.message || "Something went wrong");
         } finally {
@@ -143,27 +144,27 @@ export default function DashboardHeader({
         return () => window.removeEventListener("mousedown", handleClick);
     }, []);
 
-async function handleCreateUrl(url: string) {
-  if (loading) return;
+    async function handleCreateUrl(url: string) {
+        if (loading) return;
 
-  try {
-    setLoading(true);
+        try {
+            setLoading(true);
 
-    const response = await CreateNewUrl(url);
+            const response = await CreateNewUrl(url);
 
-    setCreatedUrl(response.data);
+            setCreatedUrl(response.data);
 
-    await onUrlCreated();
+            await onUrlCreated();
 
-    toast.success(response.message);
-  } catch (error: any) {
-    toast.error(
-      error.message || "Failed to create URL"
-    );
-  } finally {
-    setLoading(false);
-  }
-}
+            toast.success(response.message);
+        } catch (error: any) {
+            toast.error(
+                error.message || "Failed to create URL"
+            );
+        } finally {
+            setLoading(false);
+        }
+    }
     return (
         <>
             <div className="fixed inset-x-0 top-2 z-50">
@@ -189,12 +190,14 @@ async function handleCreateUrl(url: string) {
 
                             <div ref={dropdownRef} className="relative flex gap-4 justify-center items-center">
                                 <Button
-                                    className="cursor-pointer h-10"
+
+                                    className="hidden lg:flex cursor-pointer h-10"
                                     variant="primary"
-                                    onClick={() =>{ setCreatedUrl(null) ;setCreateModalOpen(true)} }
+                                    onClick={() => { setCreatedUrl(null); setCreateModalOpen(true) }}
                                 >
                                     Create URL
                                 </Button>
+
 
                                 <motion.button
                                     whileHover={{ scale: 1.05 }}
@@ -228,10 +231,28 @@ async function handleCreateUrl(url: string) {
                                             animate={{ opacity: 1, y: 0, scale: 1 }}
                                             exit={{ opacity: 0, y: 8, scale: 0.96 }}
                                             transition={{ duration: 0.2 }}
-                                            className="absolute right-0 top-[calc(100%+12px)] z-[999] w-[340px]"
+                                            className="
+absolute
+right-0
+top-[calc(100%+12px)]
+z-[999]
+w-[300px]
+sm:w-[340px]
+shadow-[0_40px_100px_-20px_rgba(0,0,0,.9)]
+"
                                         >
-                                            <div className="glass overflow-hidden p-2">
-                                                <div className="relative overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.02)] p-5">
+                                            <div
+                                                className="
+    overflow-hidden
+    rounded-[28px]
+    border border-[rgba(255,255,255,0.08)]
+    bg-[#0B0B10]
+    shadow-[0_30px_80px_-20px_rgba(0,0,0,.85)]
+    backdrop-blur-3xl
+    p-2
+  "
+                                            >
+                                                <div className="relative overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.04)] p-5">
                                                     <div
                                                         className="absolute left-1/2 top-0 h-24 w-24 -translate-x-1/2 rounded-full"
                                                         style={{ background: "rgba(99,102,241,0.15)", filter: "blur(40px)" }}
@@ -266,6 +287,18 @@ async function handleCreateUrl(url: string) {
                                                 </div>
 
                                                 <div className="mt-3 flex flex-col gap-2">
+                                                    <Button
+                                                        variant="primary"
+                                                        size="md"
+                                                        className="w-full justify-start cursor-pointer sm:hidden mb-1"
+                                                        onClick={() => {
+                                                            setOpen(false);
+                                                            setCreatedUrl(null);
+                                                            setCreateModalOpen(true);
+                                                        }}
+                                                    >
+                                                        Create URL
+                                                    </Button>
                                                     <Button
                                                         variant="secondary"
                                                         size="md"

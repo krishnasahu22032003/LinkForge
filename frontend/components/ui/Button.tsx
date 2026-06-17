@@ -79,7 +79,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || loading}
         className={`
-          inline-flex items-center justify-center
+          ${!className.includes("hidden") ? "inline-flex" : ""}
+           items-center justify-center
           font-medium leading-none tracking-tight
           transition-all duration-200 ease-out
           active:scale-[0.97]
