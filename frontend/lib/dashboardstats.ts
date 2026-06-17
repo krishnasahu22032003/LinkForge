@@ -9,7 +9,7 @@ interface Response {
     }
 };
 
-export default async function DashboardStats():Promise<Response>{
+export default async function GetDashboardStats():Promise<Response>{
 
     try{
 

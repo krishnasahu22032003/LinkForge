@@ -155,7 +155,16 @@ export default function DashboardHeader() {
                                 </span>
                             </div>
 
-                            <div ref={dropdownRef} className="relative">
+                            <div ref={dropdownRef} className="relative flex ">
+                                <motion.button
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.96 }}
+                                    onClick={() => setOpen(!open)}
+                                    className="relative flex h-12 w-12 items-center justify-center cursor-pointer rounded-2xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.04)] backdrop-blur-xl transition-all duration-300 hover:border-[var(--color-border-hover)] hover:bg-[rgba(255,255,255,0.08)] hover:shadow-[0_12px_40px_-10px_rgba(99,102,241,0.35)]"
+                                >
+                                    Create Link
+                                </motion.button>
+
                                 <motion.button
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.96 }}

@@ -3,7 +3,7 @@
 import { motion, useMotionValue, useTransform, animate } from "framer-motion";
 import { Link2, MousePointerClick, TrendingUp, Zap } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import DashboardStats from "@/lib/dashboardstats";
+import GetDashboardStats from "@/lib/dashboardstats";
 import { toast } from "sonner";
 
 interface Stats {
@@ -184,7 +184,7 @@ export default function DashboardStats() {
     useEffect(() => {
         async function fetchStats() {
             try {
-                const res = await DashboardStats();
+                const res = await GetDashboardStats();
                 const data = res.data;
                 if (data.totalUrls === 0 && data.totalClicks === 0) {
                     setIsEmpty(true);

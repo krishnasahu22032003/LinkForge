@@ -1,14 +1,14 @@
 import DashboardHeader from "@/components/ui/DashboardHeader";
+import DashboardStats from "@/components/ui/Dashboardstat";
 
 export default function DashboardPage() {
+    return (
+        <>
+            <DashboardHeader />
 
-  return (
-    <>
-      <DashboardHeader/>
-
-      <main className="pt-28">
-        Dashboard Content
-      </main>
-    </>
-  );
+            <main className="mx-auto px-4 pt-22 sm:px-6 lg:px-8">
+                <DashboardStats />
+            </main>
+        </>
+    );
 }
