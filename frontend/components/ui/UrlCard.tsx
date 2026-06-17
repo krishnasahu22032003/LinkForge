@@ -97,6 +97,7 @@ export default function UrlCard({
             <a
               href={shortUrl}
               target="_blank"
+               rel="noopener noreferrer"
               className="
               block
               truncate

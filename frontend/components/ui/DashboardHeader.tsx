@@ -13,6 +13,10 @@ import UpdateProfileModal from "./UpdateProfileModal";
 import CreateUrlModal from "./CreateLinkModal";
 import CreateNewUrl, { ShortUrlData } from "@/lib/createUrl";
 
+interface DashboardHeaderProps {
+  onUrlCreated: () => Promise<void>;
+}
+
 interface User {
     id: string;
     username: string;
@@ -45,7 +49,9 @@ function ProfileSkeleton() {
     );
 }
 
-export default function DashboardHeader() {
+export default function DashboardHeader({
+  onUrlCreated,
+}: DashboardHeaderProps) {
     const [open, setOpen] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
     const [loadingUser, setLoadingUser] = useState(false);
@@ -137,25 +143,27 @@ export default function DashboardHeader() {
         return () => window.removeEventListener("mousedown", handleClick);
     }, []);
 
-    async function handleCreateUrl(url: string) {
-        if (loading) return;
+async function handleCreateUrl(url: string) {
+  if (loading) return;
 
-        try {
-            setLoading(true);
+  try {
+    setLoading(true);
 
-            const response = await CreateNewUrl(url);
+    const response = await CreateNewUrl(url);
 
-            setCreatedUrl(response.data);
+    setCreatedUrl(response.data);
 
-            toast.success(response.message);
-        } catch (error: any) {
-            toast.error(
-                error.message || "Failed to create URL"
-            );
-        } finally {
-            setLoading(false);
-        }
-    }
+    await onUrlCreated();
+
+    toast.success(response.message);
+  } catch (error: any) {
+    toast.error(
+      error.message || "Failed to create URL"
+    );
+  } finally {
+    setLoading(false);
+  }
+}
     return (
         <>
             <div className="fixed inset-x-0 top-2 z-50">
@@ -179,11 +187,11 @@ export default function DashboardHeader() {
                                 </span>
                             </div>
 
-                            <div ref={dropdownRef} className="relative group flex gap-4 justify-center align-center">
+                            <div ref={dropdownRef} className="relative flex gap-4 justify-center items-center">
                                 <Button
                                     className="cursor-pointer h-10"
                                     variant="primary"
-                                    onClick={() => setCreateModalOpen(true)}
+                                    onClick={() =>{ setCreatedUrl(null) ;setCreateModalOpen(true)} }
                                 >
                                     Create URL
                                 </Button>
