@@ -7,11 +7,11 @@ interface Response {
 
 };
 
-export default async function GetUserUrls():Promise<Response>{
+export default async function GetUserUrls(page = 1 , limit = 10):Promise<Response>{
 
     try{
 
-        const res = await AxiosInstance.get<Response>("/api/v1/url/me");
+        const res = await AxiosInstance.get<Response>(`/api/v1/url/me?page=${page}&limit=${limit}`);
         return res.data ; 
 
     }catch (error: any) {
