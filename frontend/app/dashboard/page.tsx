@@ -1,109 +1,137 @@
+"use client"
+
 import AnalyticsModal from "@/components/ui/AnalyticsModal";
 import DashboardHeader from "@/components/ui/DashboardHeader";
 import DashboardStats from "@/components/ui/Dashboardstat";
-import UrlCard from "@/components/ui/UrlCard";
 import UrlList from "@/components/ui/UrlList";
 import DeleteUrl from "@/lib/deleteurl";
 import GetUrlAnalytics, { UrlAnalyticsData } from "@/lib/geturlanalytics";
-import GetUserUrls from "@/lib/getuserurls";
+import GetUserUrls, { Url, Pagination } from "@/lib/getuserurls";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function DashboardPage() {
 
-const [urls, setUrls] = useState<URL[]>([]);
+  const [urls, setUrls] = useState<Url[]>([]);
 
-const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-const [page, setPage] = useState(1);
+  const [page, setPage] = useState(1);
 
-const [pagination, setPagination] = useState({
-  page: 1,
-  limit: 10,
-  totalItems: 0,
-  totalPages: 0,
-  hasNextPage: false,
-  hasPreviousPage: false,
-});
+  const [pagination, setPagination] =
+    useState<Pagination>({
+      page: 1,
+      limit: 10,
+      totalItems: 0,
+      totalPages: 0,
+      hasNextPage: false,
+      hasPreviousPage: false,
+    });
 
-const [analyticsOpen, setAnalyticsOpen] = useState(false);
+  const [analyticsOpen, setAnalyticsOpen] = useState(false);
 
-const [analytics, setAnalytics] =useState<UrlAnalyticsData | null>(null);
+  const [analytics, setAnalytics] = useState<UrlAnalyticsData | null>(null);
 
-async function fetchUrls(currentPage = 1) {
-  try {
-    setLoading(true);
+  async function fetchUrls(currentPage = 1) {
 
-    const response = await GetUserUrls(currentPage);
+    try {
+      setLoading(true);
 
-    setUrls(response.data);
+      const response = await GetUserUrls(currentPage);
 
-    setPagination(response.pagination);
-  } catch (error: any) {
-    toast.error(error.message);
-  } finally {
-    setLoading(false);
+      setUrls(response.data);
+
+      setPagination(response.pagination);
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
   }
-}
 
-useEffect(() => {
-  fetchUrls(page);
-}, [page]);
+  useEffect(() => {
+    fetchUrls(page);
+  }, [page]);
 
-async function handleDelete(id: string) {
-  try {
-    const response = await DeleteUrl(id);
+  async function handleDelete(id: string) {
+    try {
+      const response = await DeleteUrl(id);
 
-    setUrls((prev) =>
-      prev.filter((url) => url.id !== id)
-    );
+      setUrls((prev) =>
+        prev.filter((url) => url.id !== id)
+      );
 
-    toast.success(response.message);
-  } catch (error: any) {
-    toast.error(error.message);
+      toast.success(response.message);
+    } catch (error: any) {
+      toast.error(error.message);
+    }
   }
-}
 
-async function handleAnalytics(id: string) {
-  try {
-    const response =
-      await GetUrlAnalytics(id);
+  async function handleAnalytics(id: string) {
+    try {
+      const response =
+        await GetUrlAnalytics(id);
 
-    setAnalytics(response.data);
+      setAnalytics(response.data);
 
-    setAnalyticsOpen(true);
-  } catch (error: any) {
-    toast.error(error.message);
+      setAnalyticsOpen(true);
+    } catch (error: any) {
+      toast.error(error.message);
+    }
   }
-}
 
-    return (
-        <>
-            <DashboardHeader />
+  return (
+    <>
+      <DashboardHeader />
 
-            <main className="mx-auto px-4 pt-22 sm:px-6 lg:px-8">
-                <DashboardStats />
+      <main className="mx-auto px-4 pt-22 sm:px-6 lg:px-8">
+        <DashboardStats />
+        {urls.length === 0 && !loading ? (
+          <div className="flex min-h-[300px] items-center justify-center rounded-3xl border border-[var(--color-border)] bg-white/[0.03]">
+            <div className="text-center">
+              <h3 className="text-xl font-semibold">
+                No URLs Yet
+              </h3>
 
-                {urls.map((url) => (
-  <UrlCard
-    key={url.id}
-    {...url}
-    onDelete={onDelete}
-    onAnalytics={onAnalytics}
-  />
-))}
+              <p className="mt-2 text-[var(--color-text-muted)]">
+                Create your first short URL from the dashboard.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <UrlList
+            urls={urls}
+            onDelete={handleDelete}
+            onAnalytics={handleAnalytics}
+          />
+        )}
+        <div className="mt-8 flex items-center justify-center gap-4">
+          <button
+            disabled={!pagination.hasPreviousPage}
+            onClick={() => setPage((p) => p - 1)}
+            className="rounded-xl border border-[var(--color-border)] px-4 py-2 disabled:opacity-50"
+          >
+            Previous
+          </button>
 
-                <UrlList
-  urls={urls}
-  onDelete={handleDelete}
-  onAnalytics={handleAnalytics}
-/>
-<AnalyticsModal
-  open={analyticsOpen}
-  analytics={analytics}
-  onClose={() => setAnalyticsOpen(false)}
-/>
-            </main>
-        </>
-    );
+          <span>
+            Page {pagination.page} of {pagination.totalPages}
+          </span>
+
+          <button
+            disabled={!pagination.hasNextPage}
+            onClick={() => setPage((p) => p + 1)}
+            className="rounded-xl border border-[var(--color-border)] px-4 py-2 disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+        <AnalyticsModal
+          open={analyticsOpen}
+          analytics={analytics}
+          onClose={() => setAnalyticsOpen(false)}
+        />
+      </main>
+    </>
+  );
 }

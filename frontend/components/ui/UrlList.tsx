@@ -2,8 +2,7 @@
 
 import { AnimatePresence } from "framer-motion";
 import UrlCard from "./UrlCard";
-import Button from "./Button";
-import AnalyticsModal from "./AnalyticsModal";
+import { Url } from "@/lib/getuserurls";
 
 interface Props {
   urls: Url[];
@@ -17,8 +16,7 @@ export default function UrlList({
   onAnalytics,
 }: Props) {
   return (
-    <>
-       <div className="grid gap-5">
+    <div className="grid gap-5">
       <AnimatePresence>
         {urls.map((url) => (
           <UrlCard
@@ -30,41 +28,5 @@ export default function UrlList({
         ))}
       </AnimatePresence>
     </div>
-    <div className="mt-10 flex items-center justify-center gap-4">
-  <Button
-    variant="outline"
-    disabled={!pagination.hasPreviousPage}
-    onClick={() =>
-      setPage((prev) => prev - 1)
-    }
-  >
-    Previous
-  </Button>
-
-  <div className="rounded-xl border border-[var(--color-border)] px-4 py-2">
-    Page {pagination.page} of{" "}
-    {pagination.totalPages}
-  </div>
-
-  <Button
-    variant="outline"
-    disabled={!pagination.hasNextPage}
-    onClick={() =>
-      setPage((prev) => prev + 1)
-    }
-  >
-    Next
-  </Button>
-</div>
-    <AnalyticsModal
-  open={analyticsOpen}
-  analytics={analytics}
-  onClose={() =>
-    setAnalyticsOpen(false)
-  }
-/>
-    </>
- 
-    
   );
 }
