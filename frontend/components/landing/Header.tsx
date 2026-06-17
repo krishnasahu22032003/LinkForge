@@ -145,6 +145,7 @@ const Navbar = () => {
 
                         <div className="mt-4 flex w-[240px] flex-col gap-3">
                             <Button
+                                onClick={()=>router.push("/signin")}
                                 variant="secondary"
                                 size="lg"
                                 className="w-full"
@@ -153,6 +154,7 @@ const Navbar = () => {
                             </Button>
 
                             <Button
+                            onClick={()=>router.push("/signup")}
                                 variant="primary"
                                 size="lg"
                                 className="w-full"
