@@ -174,8 +174,6 @@ const cleanedEmail =email.trim().toLowerCase();
 
       const credential =
         credentialResponse.credential;
-        console.log(credentialResponse);
-console.log(credentialResponse.credential);
 
       if (!credential) {
         throw new Error("Missing credential");

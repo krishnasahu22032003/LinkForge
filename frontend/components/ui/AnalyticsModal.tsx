@@ -67,12 +67,12 @@ export default function AnalyticsModal({
               y: 20,
             }}
             transition={{
-              duration: 0.4,
+              duration: 0.7,
               ease: [0.22, 1, 0.36, 1],
             }}
             className="fixed inset-0 z-[60] flex items-center justify-center p-4"
           >
-            <div className="relative w-full max-w-5xl overflow-hidden rounded-[32px] border border-[var(--color-border)] bg-[rgba(8,8,12,.96)] shadow-[0_50px_140px_-30px_rgba(0,0,0,.85)] backdrop-blur-3xl">
+           <div className="relative w-full max-w-5xl max-h-[90vh] overflow-hidden rounded-[32px] border border-[var(--color-border)] bg-[rgba(8,8,12,.96)] shadow-[0_50px_140px_-30px_rgba(0,0,0,.85)] backdrop-blur-3xl">
 
               <div
                 className="absolute left-1/2 top-0 h-[340px] w-[460px] -translate-x-1/2 rounded-full"
@@ -99,7 +99,7 @@ export default function AnalyticsModal({
                 <X size={18} />
               </button>
 
-              <div className="relative p-6 md:p-8">
+              <div className="relative max-h-[90vh] overflow-y-auto p-6 md:p-8">
 
                 <div className="mb-8">
                   <div className="flex items-center gap-3">
@@ -139,6 +139,7 @@ export default function AnalyticsModal({
                         </div>
 
                         <Button
+                        className="cursor-pointer"
                           variant="outline"
                           size="sm"
                           onClick={copyLink}
@@ -231,7 +232,7 @@ export default function AnalyticsModal({
 
                       <div className="overflow-hidden rounded-3xl border border-[var(--color-border)] bg-white/[0.03]">
 
-                        <div className="max-h-[420px] overflow-y-auto">
+                        <div className="max-h-[350px] overflow-y-auto   scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
 
                           {analytics.visits.length === 0 ? (
                             <div className="flex h-40 items-center justify-center text-[var(--color-text-muted)]">

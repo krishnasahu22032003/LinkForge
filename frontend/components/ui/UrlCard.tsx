@@ -87,9 +87,9 @@ export default function UrlCard({
       <div className="relative">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0 flex-1">
-            <div className="mb-1 flex items-center gap-2">
-              <Link2 size={14} />
-              <span className="text-xs uppercase tracking-wider text-[var(--color-text-dim)]">
+            <div className="mb-2 flex items-center  gap-2">
+              <Link2 size={16} />
+              <span className="text-xs items-center uppercase tracking-wider text-[var(--color-text-dim)]">
                 Short URL
               </span>
             </div>
@@ -111,7 +111,8 @@ export default function UrlCard({
             </a>
           </div>
 
-          <Button
+          <Button 
+           className="cursor-pointer"
             variant="ghost"
             size="sm"
             onClick={copyLink}
@@ -120,7 +121,7 @@ export default function UrlCard({
           </Button>
         </div>
 
-        <div className="mt-5">
+        <div className="mt-4">
           <p className="mb-1 text-xs uppercase tracking-wider text-[var(--color-text-dim)]">
             Original URL
           </p>
@@ -162,6 +163,7 @@ export default function UrlCard({
 
         <div className="mt-6 flex flex-wrap gap-2">
           <Button
+          className="cursor-pointer"
             variant="secondary"
             size="sm"
             onClick={() => onAnalytics(id)}
@@ -171,6 +173,7 @@ export default function UrlCard({
           </Button>
 
           <Button
+           className="cursor-pointer"
             variant="danger"
             size="sm"
             onClick={() => onDelete(id)}

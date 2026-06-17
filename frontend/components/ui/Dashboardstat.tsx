@@ -176,7 +176,11 @@ function SkeletonCard({ delay }: { delay: number }) {
     );
 }
 
-export default function DashboardStats() {
+export default function DashboardStats({
+  refreshKey,
+}: {
+  refreshKey: number;
+}) {
     const [stats, setStats] = useState<Stats | null>(null);
     const [loading, setLoading] = useState(true);
     const [isEmpty, setIsEmpty] = useState(false);
@@ -198,7 +202,7 @@ export default function DashboardStats() {
             }
         }
         fetchStats();
-    }, []);
+    }, [refreshKey]);
 
     return (
         <section className="w-full">

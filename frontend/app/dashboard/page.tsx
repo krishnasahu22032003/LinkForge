@@ -34,13 +34,15 @@ export default function DashboardPage() {
 
   const [analytics, setAnalytics] = useState<UrlAnalyticsData | null>(null);
 
+  const [statsRefresh, setStatsRefresh] =
+    useState(0);
+
   async function fetchUrls(currentPage = 1) {
 
     try {
       setLoading(true);
 
       const response = await GetUserUrls(currentPage);
-       console.log("URL RESPONSE", response);
 
       setUrls(response.data);
 
@@ -60,9 +62,13 @@ export default function DashboardPage() {
     try {
       const response = await DeleteUrl(id);
 
-    toast.success(response.message);
+      toast.success(response.message);
 
-await fetchUrls(page);
+      await fetchUrls(page);
+
+      setStatsRefresh(
+        (prev) => prev + 1
+      );
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -84,37 +90,47 @@ await fetchUrls(page);
   return (
     <>
       <DashboardHeader
-       onUrlCreated={() => fetchUrls(page)} />
+        onUrlCreated={async () => {
+          await fetchUrls(page);
+
+          setStatsRefresh(
+            (prev) => prev + 1
+          );
+        }}
+      />
 
       <main className="mx-auto px-4 pt-22 sm:px-6 lg:px-8">
-        <DashboardStats />
-   {loading ? (
-  <DashboardSkeleton />
-) : urls.length === 0 ? (
-  <div className="flex min-h-[300px] items-center justify-center rounded-3xl border border-[var(--color-border)] bg-white/[0.03]">
-    <div className="text-center">
-      <h3 className="text-xl font-semibold">
-        No URLs Yet
-      </h3>
+        <div className="mb-4">
+          <DashboardStats refreshKey={statsRefresh} />
+        </div>
 
-      <p className="mt-2 text-[var(--color-text-muted)]">
-        Create your first short URL.
-      </p>
-    </div>
-  </div>
-) : (
-  <UrlList
-    urls={urls}
-    onDelete={handleDelete}
-    onAnalytics={handleAnalytics}
-  />
-)}
-        <div className="mt-8 flex items-center justify-center gap-4">
+        {loading ? (
+          <DashboardSkeleton />
+        ) : urls.length === 0 ? (
+          <div className="flex min-h-[300px] items-center justify-center rounded-3xl border border-[var(--color-border)] bg-white/[0.03]">
+            <div className="text-center">
+              <h3 className="text-xl font-semibold">
+                No URLs Yet
+              </h3>
+
+              <p className="mt-2 text-[var(--color-text-muted)]">
+                Create your first short URL.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <UrlList
+            urls={urls}
+            onDelete={handleDelete}
+            onAnalytics={handleAnalytics}
+          />
+        )}
+        <div className="mt-8 mb-3 flex items-center justify-center gap-4">
           <Button
-          variant="outline"
+            variant="outline"
             disabled={!pagination.hasPreviousPage}
             onClick={() => setPage((p) => p - 1)}
-            className="rounded-xl border border-[var(--color-border)] px-4 py-2 disabled:opacity-50"
+            className="rounded-xl cursor-pointer border border-[var(--color-border)] px-4 py-2 disabled:opacity-50"
           >
             Previous
           </Button>
@@ -124,10 +140,10 @@ await fetchUrls(page);
           </span>
 
           <Button
-          variant="outline"
+            variant="outline"
             disabled={!pagination.hasNextPage}
             onClick={() => setPage((p) => p + 1)}
-            className="rounded-xl border border-[var(--color-border)] px-4 py-2 disabled:opacity-50"
+            className="rounded-xl border cursor-pointer border-[var(--color-border)] px-4 py-2 disabled:opacity-50"
           >
             Next
           </Button>

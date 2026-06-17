@@ -24,8 +24,7 @@ export async function CreateUrl(req: Request, res: Response) {
     const cachedCode = await redis.get(`original:${url}`);
 
     if (cachedCode) {
-      console.log("REDIS HIT");
-
+    
       const existingUrl = await prisma.url.findUnique({
         where: {
           shortCode: cachedCode as string,
@@ -48,8 +47,6 @@ export async function CreateUrl(req: Request, res: Response) {
         });
       }
     }
-
-    console.log("REDIS MISS");
 
     const existingUrl = await prisma.url.findFirst({
       where: {
@@ -105,7 +102,7 @@ export async function CreateUrl(req: Request, res: Response) {
         userId: req.userId ?? null,
       },
     });
- console.log("USER ID:", req.userId);
+
     await Promise.all([
       redis.set(
         `original:${url}`,
@@ -242,7 +239,7 @@ if (!shortCode || Array.isArray(shortCode)) {
 }
 
 export async function getUserUrls(req: Request, res: Response) {
-    console.log("NEW PAGINATION CONTROLLER");
+
   if (!req.userId) {
     return res.status(401).json({
       success: false,

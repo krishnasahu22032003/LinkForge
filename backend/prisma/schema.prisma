@@ -56,7 +56,7 @@ model Url {
 model Visit {
   id          String   @id @default(cuid())
   shortUrlId  String
-  shortUrl    Url      @relation(fields: [shortUrlId], references: [id])
+  shortUrl    Url      @relation(fields: [shortUrlId], references: [id] , onDelete: Cascade)
 
   ipAddress   String?
   userAgent   String?
