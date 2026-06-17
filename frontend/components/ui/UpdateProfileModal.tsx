@@ -80,18 +80,18 @@ export default function UpdateProfileModal({
                                 transition={{ duration: 0.18 }}
                                 onClick={() => { if (!loading) onClose(); }}
                                 disabled={loading}
-                                className="absolute right-5 top-5 z-20 flex h-11 w-11 cursor-pointer items-center justify-center rounded-2xl border border-[var(--color-border)] bg-white/[0.03] text-[var(--color-text-muted)] transition-all duration-300 hover:border-[var(--color-border-hover)] hover:bg-white/[0.06] hover:text-[var(--color-text)] disabled:opacity-40 disabled:cursor-not-allowed"
+                                className="absolute right-5 top-5 z-20 flex h-10 w-10 cursor-pointer items-center justify-center rounded-2xl border border-[var(--color-border)] bg-white/[0.03] text-[var(--color-text-muted)] transition-all duration-300 hover:border-[var(--color-border-hover)] hover:bg-white/[0.06] hover:text-[var(--color-text)] disabled:opacity-40 disabled:cursor-not-allowed"
                             >
                                 <X size={18} />
                             </motion.button>
 
                             <div className="relative p-6 md:p-8">
                                 <div className="mb-6 text-center">
-                                    <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-[20px] bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-accent-light)] shadow-[0_20px_60px_-15px_rgba(99,102,241,0.55)]">
+                                    <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-[20px] bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-accent-light)] shadow-[0_20px_60px_-15px_rgba(99,102,241,0.55)]">
                                         <Sparkles size={24} />
                                     </div>
                                     <h2 className="text-4xl font-bold tracking-[-0.04em]">Update Profile</h2>
-                                    <p className="mt-3 text-base text-[var(--color-text-muted)]">
+                                    <p className="mt-2 text-base text-[var(--color-text-muted)]">
                                         Customize your LinkForge identity and security settings.
                                     </p>
                                 </div>
@@ -186,7 +186,7 @@ export default function UpdateProfileModal({
                                         </div>
                                     </div>
 
-                                    <div className="border-t border-[var(--color-border)] pt-5">
+                                    <div className="border-t border-[var(--color-border)] ">
                                         <Button
                                             type="submit"
                                             variant="primary"
