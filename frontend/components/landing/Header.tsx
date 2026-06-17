@@ -85,6 +85,7 @@ const Navbar = () => {
                                 </Button>
 
                                 <Button
+                                 onClick={()=>router.push("/signup")}
                                     variant="primary"
                                     size="lg"
                                     className="cursor-pointer"

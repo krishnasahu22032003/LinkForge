@@ -109,6 +109,7 @@ export default function DashboardHeader() {
             await updateUserDetails(payload as UserData);
             setUserdata((prev) => prev ? { ...prev, username: data.username } : prev);
             toast.success("Profile updated successfully");
+            router.push("/signin")
             setModalOpen(false);
         } catch (error: any) {
             toast.error(error.message || "Something went wrong");

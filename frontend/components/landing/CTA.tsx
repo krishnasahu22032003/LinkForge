@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react";
+import { useRouter } from "next/navigation";
 import { motion, type Easing } from "framer-motion";
 import { ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
 
@@ -170,6 +170,7 @@ const SPARKS = [
 ];
 
 function CtaSparks() {
+
   return (
     <div className="absolute inset-0 pointer-events-none z-0" aria-hidden="true">
       {SPARKS.map((s, i) => (
@@ -194,6 +195,10 @@ function CtaSparks() {
 }
 
 export default function CTA() {
+
+    
+  const router = useRouter();
+  
   return (
     <div className="lf-root">
       <ThemeStyles />
@@ -257,8 +262,9 @@ export default function CTA() {
             >
               <div className="w-full flex items-center justify-center">
                 <motion.button
+                onClick={()=>router.push("/signup")}
                   whileTap={{ scale: 0.97 }}
-                  className="btn-primary px-7 py-3.5 inline-flex items-center justify-center gap-2 w-full sm:w-auto"
+                  className="btn-primary cursor-pointer px-7 py-3.5 inline-flex items-center justify-center gap-2 w-full sm:w-auto"
                 >
                   Get started free
                   <ArrowRight className="w-4 h-4" />

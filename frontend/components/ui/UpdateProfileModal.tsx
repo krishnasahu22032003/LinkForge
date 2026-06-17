@@ -116,7 +116,7 @@ export default function UpdateProfileModal({
                                     <div>
                                         <label className="mb-2 block text-sm font-medium text-[var(--color-text-muted)]">
                                             Current Password
-                                            <span className="ml-2 text-xs text-[var(--color-text-dim)]">optional</span>
+                                        
                                         </label>
                                         <div className="flex h-14 w-full items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-white/[0.03] px-4 transition-all duration-300 focus-within:border-[var(--color-accent)] focus-within:shadow-[0_0_0_4px_rgba(99,102,241,0.12)]">
                                             <Lock size={18} className="shrink-0 text-[var(--color-text-dim)]" />
