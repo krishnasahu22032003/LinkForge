@@ -3,7 +3,6 @@
 <br />
 
 <!-- Logo / Banner -->
-<img src="https://raw.githubusercontent.com/krishna-sahu-work/linkforge/main/frontend/public/logo.png" alt="LinkForge Logo" width="80" height="80" />
 
 <h1>
   <b>LinkForge</b>
@@ -23,11 +22,6 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Prisma-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![Redis](https://img.shields.io/badge/Redis-Cache-DC382D?style=for-the-badge&logo=redis&logoColor=white)](https://redis.io/)
 
-<!-- Badges Row 2 -->
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen?style=for-the-badge)](CONTRIBUTING.md)
-[![Stars](https://img.shields.io/github/stars/krishna-sahu-work/linkforge?style=for-the-badge&logo=github&color=gold)](https://github.com/krishna-sahu-work/linkforge/stargazers)
-
 ---
 
 </div>
@@ -36,7 +30,7 @@
 
 If LinkForge has been useful or inspired you, consider dropping a star — it truly helps!
 
-[![GitHub Stars](https://img.shields.io/github/stars/krishna-sahu-work/linkforge?style=social)](https://github.com/krishna-sahu-work/linkforge)
+[![GitHub Stars](https://img.shields.io/github/stars/krishna-sahu-work/linkforge?style=social)](https://github.com/krishnasahu22032003/LinkForge)
 
 > Every star motivates continued development and helps others discover this project. 🙏
 
@@ -543,7 +537,7 @@ Made with ❤️ by **Krishna Sahu**
 
 *If this project helped you, consider giving it a ⭐ on GitHub — it means a lot!*
 
-[![GitHub Stars](https://img.shields.io/github/stars/krishna-sahu-work/linkforge?style=for-the-badge&logo=github&color=gold&label=Star%20this%20repo)](https://github.com/krishna-sahu-work/linkforge)
+[![GitHub Stars](https://img.shields.io/github/stars/krishna-sahu-work/linkforge?style=for-the-badge&logo=github&color=gold&label=Star%20this%20repo)](https://github.com/krishnasahu22032003/LinkForge)
 
 <br />
 
