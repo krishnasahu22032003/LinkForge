@@ -40,6 +40,7 @@ export default function DashboardPage() {
       setLoading(true);
 
       const response = await GetUserUrls(currentPage);
+       console.log("URL RESPONSE", response);
 
       setUrls(response.data);
 

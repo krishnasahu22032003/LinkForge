@@ -8,6 +8,7 @@ import redis from "../lib/redis.js";
 
 export async function CreateUrl(req: Request, res: Response) {
   const parsedData = createShortUrlSchema.safeParse(req.body);
+ 
 
   if (!parsedData.success) {
     return res.status(400).json({
@@ -104,7 +105,7 @@ export async function CreateUrl(req: Request, res: Response) {
         userId: req.userId ?? null,
       },
     });
-
+ console.log("USER ID:", req.userId);
     await Promise.all([
       redis.set(
         `original:${url}`,
@@ -241,6 +242,7 @@ if (!shortCode || Array.isArray(shortCode)) {
 }
 
 export async function getUserUrls(req: Request, res: Response) {
+    console.log("NEW PAGINATION CONTROLLER");
   if (!req.userId) {
     return res.status(401).json({
       success: false,
