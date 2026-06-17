@@ -1,11 +1,5 @@
 import AxiosInstance from "./axios";
 
-interface UrlData {
-
-    url: string,
-
-};
-
 export interface ShortUrlData {
     id: string;
     originalUrl: string;
@@ -22,11 +16,11 @@ export interface CreateShortUrlResponse {
     data: ShortUrlData;
 };
 
-export default async function CreateUrl(url: UrlData): Promise<CreateShortUrlResponse> {
+export default async function CreateNewUrl(url: string): Promise<CreateShortUrlResponse> {
 
     try {
 
-        const res = await AxiosInstance.post<CreateShortUrlResponse>("/api/v1/url/create", url);
+        const res = await AxiosInstance.post<CreateShortUrlResponse>("/api/v1/url/create", {url});
         return res.data;
 
     } catch (error: any) {

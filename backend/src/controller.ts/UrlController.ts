@@ -47,7 +47,7 @@ export async function CreateUrl(req: Request, res: Response) {
             `url:${createUrl.shortCode}`,
             createUrl.originalUrl)
 
-        const ShortLink = `${ENV_SECRETS.BASE_URL}/${createUrl.shortCode}`;
+        const ShortLink = `${ENV_SECRETS.BASE_URL}/api/v1/url/${createUrl.shortCode}`;
 
         return res.status(201).json({
             success: true,

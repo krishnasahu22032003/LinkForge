@@ -11,6 +11,8 @@ import {
   Sparkles,
   ShieldCheck,
 } from "lucide-react";
+import CreateNewUrl from "@/lib/createUrl";
+import { toast } from "sonner";
 
 const ThemeStyles = () => (
   <style>{`
@@ -263,8 +265,13 @@ function ForgeSparks() {
 }
 
 interface ForgeResult {
-  short: string;
-  ms: number;
+  id: string;
+  originalUrl: string;
+  shortCode: string;
+  shortUrl: string;
+  clicks: number;
+  createdAt: Date;
+  ownedByUser: boolean;
 }
 
 export default function LinkForgeHero() {
@@ -276,6 +283,25 @@ export default function LinkForgeHero() {
   const [placeholder, setPlaceholder] = useState("");
   const phIndexRef = useRef(0);
   const inputRef = useRef<HTMLInputElement>(null);
+
+async function CreateUrl() {
+
+  if (!inputValue.trim() || isForging) return;
+
+  try {
+    setIsForging(true);
+
+    const response = await CreateNewUrl(inputValue);
+
+    setResult(response.data);
+
+    toast.success("Short URL Created");
+  } catch (error: any) {
+    toast.error(error.message || "Something went wrong");
+  } finally {
+    setIsForging(false);
+  }
+}
 
   useEffect(() => {
     let cancelled = false;
@@ -324,24 +350,12 @@ export default function LinkForgeHero() {
       cancelled = true;
       clearTimeout(timeout);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
-  const handleForge = () => {
-    if (!inputValue.trim() || isForging) return;
-    setIsForging(true);
-    setResult(null);
-    setTimeout(() => {
-      const code = Math.random().toString(36).slice(2, 8);
-      const ms = Math.floor(Math.random() * 35) + 14;
-      setResult({ short: `lnkf.io/${code}`, ms });
-      setIsForging(false);
-    }, 1100);
-  };
+  }, []);
 
   const handleCopy = () => {
     if (!result) return;
-    navigator.clipboard?.writeText(`https://${result.short}`).catch(() => {});
+    navigator.clipboard?.writeText(`${result.shortUrl}`).catch(() => {});
     setCopied(true);
     setTimeout(() => setCopied(false), 1600);
   };
@@ -353,14 +367,14 @@ export default function LinkForgeHero() {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") handleForge();
+    if (e.key === "Enter") CreateUrl();
   };
 
   return (
     <div className="lf-root" >
       <ThemeStyles />
 
-      <section id="home" className="hero min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 py-28 sm:py-28">
+      <section id="home" className="hero min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 py-24 sm:py-24">
         <ForgeSparks />
 
         <div className="relative z-10 max-w-3xl w-full flex flex-col items-center text-center gap-7">
@@ -443,9 +457,9 @@ export default function LinkForgeHero() {
               </div>
 
               <motion.button
-                onClick={handleForge}
+                onClick={CreateUrl}
                 whileTap={{ scale: 0.97 }}
-                className="btn-primary px-6 py-3.5 sm:py-0 inline-flex items-center justify-center gap-2 shrink-0"
+                className="btn-primary cursor-pointer px-6 py-3.5 sm:py-0 inline-flex items-center justify-center gap-2 shrink-0"
                 disabled={isForging}
               >
                 {isForging ? (
@@ -474,7 +488,7 @@ export default function LinkForgeHero() {
               <AnimatePresence mode="wait">
                 {result && (
                   <motion.div
-                    key={result.short}
+                    key={result.id}
                     initial={{ opacity: 0, y: -8, scale: 0.98 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -6, scale: 0.98 }}
@@ -484,10 +498,11 @@ export default function LinkForgeHero() {
                     <div className="flex items-center gap-3 text-left">
                       <span className="badge-dot" style={{ background: "var(--color-success)" }} />
                       <span className="result-line" style={{ color: "var(--color-text)" }}>
-                        https://{result.short}
+                       {result.shortUrl}
                       </span>
                       <span className="label-muted hidden sm:inline-flex items-center gap-1">
-                        <Gauge className="w-3 h-3" /> forged in {result.ms}ms
+                        <Gauge className="w-3 h-3" /> 
+                        {result.clicks} clicks
                       </span>
                     </div>
 
@@ -530,7 +545,7 @@ export default function LinkForgeHero() {
               </AnimatePresence>
             </div>
 
-            <p className="sm:-mt-6  -mt-2 text-xs" style={{ color: "var(--color-text-dim)" }}>
+            <p className=" text-xs" style={{ color: "var(--color-text-dim)" }}>
               No account needed for your first 5 links.{" "}
               <span style={{ color: "var(--color-accent-pale)" }}>Forever free</span> for personal use.
             </p>
