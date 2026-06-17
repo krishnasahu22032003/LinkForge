@@ -5,7 +5,7 @@ interface Response {
     success:false ,
     data:{
          totalUrls:number ,
-        totalClicks:number
+         totalClicks:number
     }
 };
 
