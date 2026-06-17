@@ -10,6 +10,8 @@ import { useRouter } from "next/navigation";
 import GetUserDetail from "@/lib/user-details";
 import updateUserDetails from "@/lib/update-user";
 import UpdateProfileModal from "./UpdateProfileModal";
+import CreateUrlModal from "./CreateLinkModal";
+import CreateNewUrl, { ShortUrlData } from "@/lib/createUrl";
 
 interface User {
     id: string;
@@ -50,6 +52,9 @@ export default function DashboardHeader() {
     const [loadingSignout, setLoadingSignout] = useState(false);
     const [loadingUpdate, setLoadingUpdate] = useState(false);
     const [userdata, setUserdata] = useState<User | undefined>();
+    const [createModalOpen, setCreateModalOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [createdUrl, setCreatedUrl] = useState<ShortUrlData | null>(null);
     const router = useRouter();
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -132,6 +137,25 @@ export default function DashboardHeader() {
         return () => window.removeEventListener("mousedown", handleClick);
     }, []);
 
+    async function handleCreateUrl(url: string) {
+        if (loading) return;
+
+        try {
+            setLoading(true);
+
+            const response = await CreateNewUrl(url);
+
+            setCreatedUrl(response.data);
+
+            toast.success(response.message);
+        } catch (error: any) {
+            toast.error(
+                error.message || "Failed to create URL"
+            );
+        } finally {
+            setLoading(false);
+        }
+    }
     return (
         <>
             <div className="fixed inset-x-0 top-2 z-50">
@@ -155,15 +179,14 @@ export default function DashboardHeader() {
                                 </span>
                             </div>
 
-                            <div ref={dropdownRef} className="relative flex ">
-                                <motion.button
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.96 }}
-                                    onClick={() => setOpen(!open)}
-                                    className="relative flex h-12 w-12 items-center justify-center cursor-pointer rounded-2xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.04)] backdrop-blur-xl transition-all duration-300 hover:border-[var(--color-border-hover)] hover:bg-[rgba(255,255,255,0.08)] hover:shadow-[0_12px_40px_-10px_rgba(99,102,241,0.35)]"
+                            <div ref={dropdownRef} className="relative group flex gap-4 justify-center align-center">
+                                <Button
+                                    className="cursor-pointer h-10"
+                                    variant="primary"
+                                    onClick={() => setCreateModalOpen(true)}
                                 >
-                                    Create Link
-                                </motion.button>
+                                    Create URL
+                                </Button>
 
                                 <motion.button
                                     whileHover={{ scale: 1.05 }}
@@ -281,6 +304,16 @@ export default function DashboardHeader() {
                 loading={loadingUpdate}
                 onClose={() => { if (!loadingUpdate) setModalOpen(false); }}
                 onSubmit={handleUpdateProfile}
+            />
+            <CreateUrlModal
+                open={createModalOpen}
+                loading={loading}
+                createdUrl={createdUrl}
+                onClose={() => {
+                    setCreateModalOpen(false);
+                    setCreatedUrl(null);
+                }}
+                onSubmit={handleCreateUrl}
             />
         </>
     );
