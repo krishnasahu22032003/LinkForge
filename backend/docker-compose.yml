@@ -1,0 +1,15 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    image: linkforge-backend
+
+    ports:
+      - "3004:3004"
+
+    env_file:
+      - .env
+
+    restart: unless-stopped
