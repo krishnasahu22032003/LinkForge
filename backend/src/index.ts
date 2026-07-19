@@ -13,6 +13,6 @@ app.use(cookieParser());
 app.use(cors({origin:"https://linkforge.krishnastack.com" , credentials:true}));
 app.use("/api/v1/user", UserRouter);
 app.use("/api/v1/url", UrlRouter);
-app.use("/ap1/v1/health" , HealthRouter)
+app.use("/api/v1/health" , HealthRouter)
 
 startServer(app) ;
