@@ -164,7 +164,7 @@ const cleanedEmail =email.trim().toLowerCase();
                 Start forging smarter links in seconds.
               </p>
             </div>
-
+<div className="w-full flex justify-center">
          <GoogleLogin
            theme="filled_black"
            size="large"
@@ -194,6 +194,8 @@ const cleanedEmail =email.trim().toLowerCase();
     toast.error("Google login failed");
   }}
 />
+</div>
+
 
             <div className="my-6 flex items-center gap-3">
               <div className="h-px flex-1 bg-border" />
