@@ -11,7 +11,7 @@ export default async function UserSignOut():Promise<Response>{
 
     try{
 
-        const res = await AxiosInstance.post<Response>("/api/v1/user/signout")
+        const res = await AxiosInstance.post<Response>("/api/v1/user/Signout")
         return res.data ;
 
     }catch (error: any) {

@@ -168,6 +168,10 @@ export default function SignupPage() {
               <GoogleLogin
                 theme="filled_black"
                 size="large"
+                width="260"
+                text="continue_with"
+                shape="pill"
+                logo_alignment="center"
                 onSuccess={async (credentialResponse) => {
                   try {
                     setGoogleLoading(true);
