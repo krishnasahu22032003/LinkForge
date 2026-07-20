@@ -99,7 +99,7 @@ export default function SignupPage() {
       toast.error("Please meet all password requirements");
       return;
     }
-const cleanedEmail =email.trim().toLowerCase();
+    const cleanedEmail = email.trim().toLowerCase();
     try {
       setLoading(true);
 
@@ -164,37 +164,37 @@ const cleanedEmail =email.trim().toLowerCase();
                 Start forging smarter links in seconds.
               </p>
             </div>
-<div className="w-full flex justify-center">
-         <GoogleLogin
-           theme="filled_black"
-           size="large"
-  onSuccess={async (credentialResponse) => {
-    try {
-      setGoogleLoading(true);
+            <div className="w-full flex justify-center">
+              <GoogleLogin
+                theme="filled_black"
+                size="large"
+                onSuccess={async (credentialResponse) => {
+                  try {
+                    setGoogleLoading(true);
 
-      const credential =
-        credentialResponse.credential;
+                    const credential =
+                      credentialResponse.credential;
 
-      if (!credential) {
-        throw new Error("Missing credential");
-      }
+                    if (!credential) {
+                      throw new Error("Missing credential");
+                    }
 
-      await GoogleAuth(credential);
+                    await GoogleAuth(credential);
 
-      toast.success("Signed in successfully");
-          
-      router.push("/dashboard");
-    } catch (error: any) {
-      toast.error(error.message);
-    } finally {
-      setGoogleLoading(false);
-    }
-  }}
-  onError={() => {
-    toast.error("Google login failed");
-  }}
-/>
-</div>
+                    toast.success("Signed in successfully");
+
+                    router.push("/dashboard");
+                  } catch (error: any) {
+                    toast.error(error.message);
+                  } finally {
+                    setGoogleLoading(false);
+                  }
+                }}
+                onError={() => {
+                  toast.error("Google login failed");
+                }}
+              />
+            </div>
 
 
             <div className="my-6 flex items-center gap-3">
@@ -294,8 +294,8 @@ const cleanedEmail =email.trim().toLowerCase();
                     <div key={item.label} className="flex items-center gap-3">
                       <div
                         className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full transition-colors duration-300 ${item.valid
-                            ? "bg-success/20 text-success"
-                            : "bg-rose-500/10 text-rose-400"
+                          ? "bg-success/20 text-success"
+                          : "bg-rose-500/10 text-rose-400"
                           }`}
                       >
                         {item.valid ? <Check size={12} /> : <X size={12} />}

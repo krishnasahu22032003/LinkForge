@@ -2,15 +2,15 @@ import type { CookieOptions } from "express";
 
 export const AUTH_COOKIE_NAME = "user_token";
 
-export const AUTH_COOKIE_OPTIONS:CookieOptions = {
+export const AUTH_COOKIE_OPTIONS: CookieOptions = {
   httpOnly: true,
-
   secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
 
-  sameSite:
+  domain:
     process.env.NODE_ENV === "production"
-      ? "none"
-      : "lax",
+      ? ".krishnastack.com"
+      : undefined,
 
   path: "/",
 
