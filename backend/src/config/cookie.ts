@@ -16,3 +16,4 @@ export const AUTH_COOKIE_OPTIONS: CookieOptions = {
 
   maxAge: 7 * 24 * 60 * 60 * 1000,
 };
+
